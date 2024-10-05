@@ -1,27 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <style> body { margin: 0; } </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RunningMan World</title>
+  <link rel="stylesheet" href="styles.css">
 
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+
+  <!-- Firebase Firestore SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+  <!-- Firebase Storage SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+
+  <!-- Globe.js -->
   <script src="//unpkg.com/globe.gl"></script>
-  <!--<script src="../../dist/globe.gl.js"></script>-->
 </head>
-
 <body>
-<div id="globeViz"></div>
+  <div id="max-container">
+    <div id="header">
+      <div id="title">
+        <h1>RUNNINGMAN WORLD</h1>
+        <div id="author">
+          <h4>by Michael Clark</h4>
+          <h4 class="ig-username">IG @ _mikeclark</h4>
+        </div>
+      </div>
+      <div id="btn-container">
+        <button class="btn" id="join-btn">JOIN</button>
+        <button class="btn" id="remove-btn">REMOVE</button>
+      </div>
+    </div>
+    <div id="loading-indicator" style="display: none;">
+      <p>Loading...</p>
+      <!-- You can replace this with a more visual spinner if desired -->
+    </div>
+    <div id="globeViz"></div>
 
-<script>
-  fetch('../datasets/ne_110m_populated_places_simple.geojson').then(res => res.json()).then(places => {
-    Globe()
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
-      .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-      .labelsData(places.features)
-      .labelLat(d => d.properties.latitude)
-      .labelLng(d => d.properties.longitude)
-      .labelText(d => d.properties.name)
-      .labelSize(d => Math.sqrt(d.properties.pop_max) * 4e-4)
-      .labelDotRadius(d => Math.sqrt(d.properties.pop_max) * 4e-4)
-      .labelColor(() => 'rgba(255, 165, 0, 0.75)')
-      .labelResolution(2)
-    (document.getElementById('globeViz'))
-  });
-</script>
+    <!-- Join Popup Card -->
+    <div id="join-popup" class="popup-card">
+      <h2>Join RunningMan World</h2>
+      <form id="join-form">
+        <label for="first-name">First Name</label>
+        <input type="text" id="first-name" name="first-name" required>
+    
+        <label for="second-name">Surname</label>
+        <input type="text" id="second-name" name="second-name" required>
+    
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" list="city-list" placeholder="Start typing your city..." required>
+        <datalist id="city-list"></datalist>
+    
+        <!-- Hidden field to store the selected city ID -->
+        <input type="hidden" id="city-id" name="city-id" />
+    
+        <!-- Image upload and cropping section -->
+        <label for="picture">Upload Picture</label>
+        <input type="file" id="picture" name="picture" accept="image/*" required>
+    
+        <label for="instagram">Instagram</label>
+        <div class="instagram-input-wrapper">
+            <span>@</span>
+            <input type="text" id="instagram" name="instagram" placeholder="Your IG username" required>
+        </div>
+    
+        <button type="submit" class="btn">Join</button>
+        <button type="button" class="btn" onclick="closePopup()">Close</button>
+      </form>
+    </div>
+
+    <!-- Remove Popup Card -->
+    <div id="remove-popup" class="popup-card">
+      <h2>Remove from RunningMan World</h2>
+      <form id="remove-form">
+        <label for="first-name-remove">First Name</label>
+        <input type="text" id="first-name-remove" name="first-name-remove" required>
+      
+        <label for="second-name-remove">Surname</label>
+        <input type="text" id="second-name-remove" name="second-name-remove" required>
+      
+        <button type="submit" class="btn">Remove</button>
+        <button type="button" class="btn" onclick="closePopup()">Close</button>
+      </form>
+    </div>
+
+    <div id="city-popup" class="popup-card">
+      <h2 id="city-name"></h2>
+      <div id="city-info"></div>
+      <button class="btn" id="city-close-btn" onclick="closeCityPopup()">Close</button>
+    </div>
+    
+    <div id="image-modal" class="image-modal">
+      <span class="close" onclick="closeImageModal()">&times;</span>
+      <img class="modal-content" id="enlarged-image">
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="scripts.js"></script>
 </body>
+</html>
