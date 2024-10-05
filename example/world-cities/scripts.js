@@ -1,18 +1,20 @@
-// Initialize Firebase (include the CDN Firebase scripts in your HTML)
 const firebaseConfig = {
-  apiKey: "AIzaSyDiS4yuy6G7Mbbxx1ZWR7w-b4TnGVBQucM",
-  authDomain: "rmw3-e14d6.firebaseapp.com",
-  projectId: "rmw3-e14d6",
-  storageBucket: "rmw3-e14d6.appspot.com",
-  messagingSenderId: "46336721956",
-  appId: "1:46336721956:web:0a567fe79f026f466404b1",
-  measurementId: "G-G6S7PRF31E"
+  apiKey: window.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: window.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: window.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: window.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: window.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: window.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: window.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase app
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.firestore();
 const storage = firebase.storage();
+
+console.log("Firebase API Key: ", window.env.REACT_APP_FIREBASE_API_KEY);
 
 // Popup card logic
 const joinPopup = document.getElementById('join-popup');

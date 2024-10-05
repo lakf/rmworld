@@ -50,6 +50,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "18 - 25",
     "accessor-fn": "1",
+    "dotenv": "^16.4.5",
     "firebase-admin": "^12.6.0",
     "kapsule": "1",
     "three": ">=0.154 <1",
