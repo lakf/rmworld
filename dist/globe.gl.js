@@ -1,4 +1,4 @@
-// Version 2.33.0 globe.gl - https://github.com/vasturiano/globe.gl
+// Version 2.33.0 globe.gl - https://lakf.github.io/rmworld/example/world-cities/index.html
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
