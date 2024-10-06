@@ -1,0 +1,212 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    overflow: hidden;
+  }
+  
+  #max-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  #header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0);
+    z-index: 100;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+  
+  #title {
+    text-align: center;
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+}
+
+#title h1 {
+    margin: 0; /* Remove default margin for better alignment */
+}
+
+#author {
+    display: flex; /* Make author details horizontal */
+    flex-direction: column; /* Stack by author vertically */
+    align-items: center; /* Center items horizontally */
+}
+
+#author h4 {
+    margin: 0; /* Remove default margin for better alignment */
+}
+
+  
+  #btn-container {
+    margin-top: 10px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: 2px solid red;
+    background-color: white;
+    color: black;
+    margin: 0 10px;
+    font-family: 'Arial', sans-serif;
+    outline: none;
+  }
+  
+  .btn:hover {
+    background-color: #ffcccc;
+  }
+  
+  .popup-card {
+    display: none;
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust position to the exact center */
+    width: 300px;
+    padding: 20px;
+    background-color: white;
+    border: 2px solid black;
+    text-align: left;
+    z-index: 200;
+  }  
+  
+  .popup-card h2 {
+    margin-bottom: 15px;
+  }
+  
+  .popup-card label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .popup-card input[type="text"],
+.popup-card input[type="file"] {
+  width: 90%; /* Reduce width to allow space on both sides */
+  margin: 0 auto 10px auto; /* Center input fields and add bottom margin */
+  padding: 8px;
+  border: 1px solid #ccc;
+  display: block; /* Ensure it's block-level to center with margin */
+}
+
+  
+  .close-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: 1px solid black;
+    cursor: pointer;
+  }
+
+  #city-close-btn {
+    margin-top: 20px; /* Increase the top margin specifically for this button */
+  }
+  
+  #loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .instagram-input-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .instagram-input-wrapper span {
+    margin-right: 5px;
+    font-size: 16px;
+  }
+
+  .instagram-input-wrapper input {
+    flex: 1;
+  }
+  
+  /* Popup card styling */
+.popup-card {
+  display: none;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  padding: 20px;
+  width: 300px;
+  max-width: 90%;
+  z-index: 1000;
+}
+
+#city-name {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+#city-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.user-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px; /* Reduce the gap between name and Instagram */
+}
+
+.user-name {
+  font-weight: bold;
+  margin: 0; /* Remove any default margin */
+}
+
+.user-instagram {
+  color: #555;
+  margin: 0; /* Remove any default margin */
+  font-size: 0.9em; /* Slightly smaller font size for Instagram */
+}
+
+#crop-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+#crop-btn {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#crop-btn:hover {
+  background-color: #45a049;
+}
+
