@@ -36,6 +36,71 @@ function closePopup() {
   removePopup.style.display = 'none';
 }
 
+let participants = [];
+
+// Fetch participants data when the script loads
+fetch('./participants.json')
+  .then(response => response.json())
+  .then(data => {
+    participants = data;
+  })
+  .catch(error => console.error('Error loading participants data:', error));
+
+// Function to check if a user exists in the participants list
+function isUserInParticipants(firstName, secondName) {
+  // Normalize inputs for case-insensitive comparison
+  const normalizedFirstName = firstName.toLowerCase();
+  const normalizedSecondName = secondName.toLowerCase();
+
+  // Check if the participant exists
+  return participants.some(participant => 
+    participant.firstName.toLowerCase() === normalizedFirstName &&
+    participant.secondName.toLowerCase() === normalizedSecondName
+  );
+}
+
+// Function to check if a user with the same first name, second name, and city already exists
+async function checkIfUserExists(firstName, secondName, cityId) {
+  try {
+    // Query the Firestore 'users' collection for the given firstName, secondName, and cityId
+    const usersSnapshot = await db.collection('users')
+      .where('firstName', '==', firstName)
+      .where('secondName', '==', secondName)
+      .where('cityId', '==', cityId)
+      .get();
+
+    // If the query returns any documents, a user already exists
+    if (!usersSnapshot.empty) {
+      return true;  // User exists
+    } else {
+      return false; // No user found
+    }
+  } catch (error) {
+    console.error('Error checking for existing user: ', error);
+    return false;  // Return false in case of error
+  }
+}
+
+// Function to check if a user with the same Instagram handle already exists
+async function checkIfInstagramExists(instagram) {
+  try {
+    // Query the Firestore 'users' collection for the given Instagram handle
+    const usersSnapshot = await db.collection('users')
+      .where('instagram', '==', instagram.toLowerCase())
+      .get();
+
+    // If the query returns any documents, a user already exists with this Instagram
+    if (!usersSnapshot.empty) {
+      return true;  // Instagram exists
+    } else {
+      return false; // No user found with this Instagram
+    }
+  } catch (error) {
+    console.error('Error checking for existing Instagram: ', error);
+    return false;  // Return false in case of error
+  }
+}
+
 // Update the image upload logic to use the cropped image blob
 document.getElementById('join-form').addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -44,18 +109,38 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
   const secondName = document.getElementById('second-name').value.trim();
   const cityId = document.getElementById('city-id').value;
   const instagram = document.getElementById('instagram').value.trim();
+  const pictureInput = document.getElementById('picture');  // Get the picture input element
+
+  if (!isUserInParticipants(firstName, secondName)) {
+    alert('User not found in marathon participants. Please check your name and try again.');
+    return; // Stop form submission
+  }
+
+  const userExists = await checkIfUserExists(firstName, secondName, cityId);
+  if (userExists) {
+    alert('A user with the same name in the selected city already exists. Please try again.');
+    return; // Stop form submission
+  }
+
+  const instagramExists = await checkIfInstagramExists(instagram);
+  if (instagramExists) {
+    alert('This Instagram handle is already associated with another user. Please use a different one.');
+    return; // Stop form submission
+  }
 
   try {
     let pictureURL = null;
 
-    // Upload the cropped image if a picture was selected
-    if (croppedImageBlob) {
+    // Check if a picture file was selected
+    if (pictureInput.files && pictureInput.files[0]) {
+      const pictureFile = pictureInput.files[0];  // Access the selected file
+      
       const storageRef = firebase.storage().ref();
       const pictureRef = storageRef.child(`profile_pictures/${firstName}_${secondName}_${Date.now()}`);
-      
-      // Upload the cropped image
-      const uploadSnapshot = await pictureRef.put(croppedImageBlob);
-      
+
+      // Upload the selected picture file
+      const uploadSnapshot = await pictureRef.put(pictureFile);
+
       // Get the image's download URL
       pictureURL = await uploadSnapshot.ref.getDownloadURL();
     }
@@ -70,6 +155,7 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
     });
 
     alert('Thank you for joining!');
+    closePopup();
   } catch (error) {
     console.error('Error adding user or uploading image:', error);
     alert('Failed to join. Please try again.');

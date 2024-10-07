@@ -43,7 +43,7 @@
     "dev": "rollup -w -c rollup.config.dev.js",
     "prepare": "npm run build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist" 
+    "deploy": "gh-pages -d dist"
   },
   "files": [
     "dist/**/*",
@@ -52,6 +52,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "18 - 25",
     "accessor-fn": "1",
+    "cheerio": "^1.0.0",
     "dotenv": "^16.4.5",
     "firebase-admin": "^12.6.0",
     "kapsule": "1",
