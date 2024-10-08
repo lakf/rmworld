@@ -14,8 +14,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-console.log("Firebase API Key: ", window.env.REACT_APP_FIREBASE_API_KEY);
-
 // Popup card logic
 const joinPopup = document.getElementById('join-popup');
 const removePopup = document.getElementById('remove-popup');
@@ -438,6 +436,29 @@ async function loadGlobeData() {
     }, 1000); // Simulate a 3-second delay
   });
 }
+
+function participantExists(secondName, bibNumber) {
+  return participants.some(participant => 
+    participant.secondName.toLowerCase() === secondName.toLowerCase() && 
+    participant.bibNo === bibNumber
+  );
+}
+
+// Form submission logic for the overlay
+document.getElementById('participant-check-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  
+  const secondName = document.getElementById('surname').value.trim();
+  const bibNumber = document.getElementById('bib-number').value.trim();
+
+  if (participantExists(secondName, bibNumber)) {
+    document.getElementById('overlay-form').style.display = 'none'; // Hide overlay form
+  } else {
+    const errorMessageDiv = document.getElementById('error-message');
+    errorMessageDiv.textContent = 'Participant not found. Please check your details.';
+    errorMessageDiv.style.display = 'block'; // Show error message
+  }
+});
 
 // Call the loadCityData function on window load or when necessary
 window.onload = loadCityData;

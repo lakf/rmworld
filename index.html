@@ -17,7 +17,6 @@
       REACT_APP_FIREBASE_MEASUREMENT_ID: 'G-G6S7PRF31E'
     };
   </script>
-  <script type="module" src="./scripts.js"></script>
 
   <!-- Firebase App (the core Firebase SDK) -->
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
@@ -108,7 +107,21 @@
       <span class="close" onclick="closeImageModal()">&times;</span>
       <img class="modal-content" id="enlarged-image">
     </div>
-
   </div>
+
+  <div id="overlay-form" class="overlay">
+    <form id="participant-check-form">
+      <h2>Participant Check</h2>
+      <label for="surname">Surname</label>
+      <input type="text" id="surname" name="surname" required>
+
+      <label for="bib-number">Bib Number</label>
+      <input type="text" id="bib-number" name="bib-number" required>
+
+      <button type="submit" class="btn">ENTER</button>
+      <div id="error-message" class="error-message" style="display: none;"></div>
+    </form>
+  </div>
+  <script src="./scripts.js"></script>
 </body>
 </html>
