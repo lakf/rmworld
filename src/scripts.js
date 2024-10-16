@@ -1,11 +1,11 @@
 const firebaseConfig = {
-  apiKey: window.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: window.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: window.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: window.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: window.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: window.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: window.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase app
@@ -33,6 +33,9 @@ function closePopup() {
   joinPopup.style.display = 'none';
   removePopup.style.display = 'none';
 }
+
+document.getElementById('close-join-form').addEventListener('click', closePopup);
+document.getElementById('close-remove-form').addEventListener('click', closePopup);
 
 let participants = [];
 
@@ -341,9 +344,9 @@ function fetchCitiesAndCreateGlobe() {
 };
 
 // Close city info popup
-function closeCityPopup() {
+document.getElementById('city-close-btn').addEventListener('click', function() {
   document.getElementById('city-popup').style.display = 'none';
-}
+});
 
 // Function to populate the city options in the datalist
 function populateCityOptions(cityMapping) {

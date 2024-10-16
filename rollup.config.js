@@ -1,3 +1,4 @@
+import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import commonJs from '@rollup/plugin-commonjs';
 import babel from '@rollup/plugin-babel';
@@ -6,6 +7,10 @@ import terser from "@rollup/plugin-terser";
 import dts from 'rollup-plugin-dts';
 
 import pkg from './package.json' assert { type: 'json' };
+
+import dotenv from 'dotenv';
+dotenv.config();
+
 const { name, homepage, version, dependencies } = pkg;
 
 const umdConf = {
@@ -16,7 +21,7 @@ const umdConf = {
 
 export default [
   {
-    input: 'src/index.js',
+    input: 'src/scripts.js',
     output: [
       {
         ...umdConf,
@@ -32,6 +37,16 @@ export default [
       }
     ],
     plugins: [
+      replace({
+        'process.env.REACT_APP_FIREBASE_API_KEY': JSON.stringify(process.env.REACT_APP_FIREBASE_API_KEY),
+        'process.env.REACT_APP_FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.REACT_APP_FIREBASE_AUTH_DOMAIN),
+        'process.env.REACT_APP_FIREBASE_PROJECT_ID': JSON.stringify(process.env.REACT_APP_FIREBASE_PROJECT_ID),
+        'process.env.REACT_APP_FIREBASE_STORAGE_BUCKET': JSON.stringify(process.env.REACT_APP_FIREBASE_STORAGE_BUCKET),
+        'process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID': JSON.stringify(process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID),
+        'process.env.REACT_APP_FIREBASE_APP_ID': JSON.stringify(process.env.REACT_APP_FIREBASE_APP_ID),
+        'process.env.REACT_APP_FIREBASE_MEASUREMENT_ID': JSON.stringify(process.env.REACT_APP_FIREBASE_MEASUREMENT_ID),
+        preventAssignment: true,
+      }),
       resolve(),
       commonJs(),
       postCss(),

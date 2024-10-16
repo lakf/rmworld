@@ -1,151 +1,153 @@
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    overflow: hidden;
-  }
-  
-  #max-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-  }
-  
-  #header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0);
-    z-index: 100;
-    position: absolute;
-    top: 0;
-    width: 100%;
-  }
-  
-  #title {
-    text-align: center;
-    margin: 0 10px;
-    display: flex;
-    flex-direction: column; 
-    align-items: center; 
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+}
+
+#max-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+#header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0);
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+#title {
+  text-align: center;
+  margin: 0 10px;
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
 }
 
 #title h1 {
-    margin: 0; /* Remove default margin for better alignment */
+  margin: 0; /* Remove default margin for better alignment */
 }
 
 #author {
-    display: flex; /* Make author details horizontal */
-    flex-direction: column; /* Stack by author vertically */
-    align-items: center; /* Center items horizontally */
+  display: flex; /* Make author details horizontal */
+  flex-direction: column; /* Stack by author vertically */
+  align-items: center; /* Center items horizontally */
 }
 
 #author h4 {
-    margin: 0; /* Remove default margin for better alignment */
+  margin: 0; /* Remove default margin for better alignment */
 }
 
-  
-  #btn-container {
-    margin-top: 10px;
-  }
-  
-  .btn {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    border: 2px solid red;
-    background-color: white;
-    color: black;
-    margin: 0 10px;
-    font-family: 'Arial', sans-serif;
-    outline: none;
-  }
-  
-  .btn:hover {
-    background-color: #ffcccc;
-  }
-  
-  .popup-card {
-    display: none;
-    position: absolute;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Adjust position to the exact center */
-    width: 300px;
-    padding: 20px;
-    background-color: white;
-    border: 2px solid black;
-    text-align: left;
-    z-index: 200;
-  }  
-  
-  .popup-card h2 {
-    margin-bottom: 15px;
-  }
-  
-  .popup-card label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  .popup-card input[type="text"],
+#btn-container {
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: 2px solid red;
+  background-color: white;
+  color: black;
+  margin: 0 10px;
+  font-family: 'Arial', sans-serif;
+  outline: none;
+}
+
+.btn:hover {
+  background-color: #ffcccc;
+}
+
+.popup-card {
+  display: none;
+  position: fixed;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust position to the exact center */
+  width: 300px;
+  max-width: 90%; /* Responsive width */
+  padding: 20px;
+  background-color: white;
+  border: 2px solid black;
+  text-align: left;
+  z-index: 200;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+  border-radius: 10px; /* Rounded corners */
+}
+
+.popup-card h2 {
+  margin-bottom: 15px;
+}
+
+.popup-card label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.popup-card input[type="text"],
 .popup-card input[type="file"] {
-  width: 90%; /* Reduce width to allow space on both sides */
-  margin: 0 auto 10px auto; /* Center input fields and add bottom margin */
+  width: 100%; /* Full width for inputs */
+  max-width: 90%; /* Allow some space on the sides */
+  margin: 0 auto 10px auto; /* Center input fields */
   padding: 8px;
   border: 1px solid #ccc;
   display: block; /* Ensure it's block-level to center with margin */
 }
 
-  
-  .close-btn {
-    margin-top: 10px;
-    padding: 5px 10px;
-    border: 1px solid black;
-    cursor: pointer;
-  }
+.close-btn {
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: 1px solid black;
+  cursor: pointer;
+}
 
-  #city-close-btn {
-    margin-top: 20px; /* Increase the top margin specifically for this button */
-  }
-  
-  #loading-indicator {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-  }
+#city-close-btn {
+  margin-top: 20px; /* Increase the top margin specifically for this button */
+}
 
-  .instagram-input-wrapper {
-    display: flex;
-    align-items: center;
-  }
+#loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
 
-  .instagram-input-wrapper span {
-    margin-right: 5px;
-    font-size: 16px;
-  }
+.instagram-input-wrapper {
+  display: flex;
+  align-items: center;
+}
 
-  .instagram-input-wrapper input {
-    flex: 1;
-  }
-  
-  /* Popup card styling */
+.instagram-input-wrapper span {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+.instagram-input-wrapper input {
+  flex: 1;
+}
+
+/* Popup card styling */
 .popup-card {
   display: none;
   position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -20%);
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust position to the exact center */
   background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  width: 300px;
-  max-width: 90%;
+  width: 300px; /* Fixed width for desktop */
+  max-width: 90%; /* Responsive design for mobile */
   z-index: 1000;
 }
 
@@ -258,4 +260,25 @@ body {
   color: red; /* Red color for error messages */
   text-align: center; /* Center error messages */
   margin-top: 10px; /* Space above error messages */
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 600px) {
+  .popup-card {
+      width: 90%; /* Full width for smaller screens */
+      padding: 15px; /* Less padding on smaller screens */
+  }
+
+  .btn {
+      font-size: 14px; /* Smaller button font size */
+      padding: 8px 16px; /* Adjust button padding */
+  }
+
+  #header {
+      padding: 10px; /* Less padding in header */
+  }
+
+  #title h1 {
+      font-size: 1.5em; /* Smaller title font size */
+  }
 }

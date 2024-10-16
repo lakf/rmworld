@@ -5,18 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RunningMan World</title>
   <link rel="stylesheet" href="styles.css">
-  <script>
-    // Define environment variables here
-    window.env = {
-      REACT_APP_FIREBASE_API_KEY: 'AIzaSyDiS4yuy6G7Mbbxx1ZWR7w-b4TnGVBQucM',
-      REACT_APP_FIREBASE_AUTH_DOMAIN: 'rmw3-e14d6.firebaseapp.com',
-      REACT_APP_FIREBASE_PROJECT_ID: 'rmw3-e14d6',
-      REACT_APP_FIREBASE_STORAGE_BUCKET: 'rmw3-e14d6.appspot.com',
-      REACT_APP_FIREBASE_MESSAGING_SENDER_ID: '46336721956',
-      REACT_APP_FIREBASE_APP_ID: '1:46336721956:web:0a567fe79f026f466404b1',
-      REACT_APP_FIREBASE_MEASUREMENT_ID: 'G-G6S7PRF31E'
-    };
-  </script>
 
   <!-- Firebase App (the core Firebase SDK) -->
   <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
@@ -78,7 +66,8 @@
         </div>
     
         <button type="submit" class="btn">Join</button>
-        <button type="button" class="btn" onclick="closePopup()">Close</button>
+        <button type="button" class="btn" id="close-join-form">Close</button>
+
       </form>
     </div>
 
@@ -93,18 +82,18 @@
         <input type="text" id="second-name-remove" name="second-name-remove" required>
       
         <button type="submit" class="btn">Remove</button>
-        <button type="button" class="btn" onclick="closePopup()">Close</button>
+        <button type="button" class="btn" id="close-remove-form">Close</button>
       </form>
     </div>
 
     <div id="city-popup" class="popup-card">
       <h2 id="city-name"></h2>
       <div id="city-info"></div>
-      <button class="btn" id="city-close-btn" onclick="closeCityPopup()">Close</button>
+      <button class="btn" id="city-close-btn">Close</button>
     </div>
     
     <div id="image-modal" class="image-modal">
-      <span class="close" onclick="closeImageModal()">&times;</span>
+      <span class="close" id="close-img-modal">&times;</span>
       <img class="modal-content" id="enlarged-image">
     </div>
   </div>
@@ -122,6 +111,6 @@
       <div id="error-message" class="error-message" style="display: none;"></div>
     </form>
   </div>
-  <script src="./scripts.js"></script>
+  <script src="dist/globe.gl.js"></script>
 </body>
 </html>
