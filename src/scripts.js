@@ -141,6 +141,24 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
   // Show loading indicator
   document.getElementById('loading-indicator').style.display = 'block';
 
+  const cityInput = document.getElementById('city');
+  const cityList = document.getElementById('city-list').options;
+  const selectedCity = cityInput.value;
+
+  // Validate the entered city matches one of the options
+  let isValidCity = false;
+  for (let i = 0; i < cityList.length; i++) {
+    if (selectedCity === cityList[i].value) {
+      isValidCity = true;
+      break;
+    }
+  }
+
+  if (!isValidCity) {
+    alert('Please select a city from the list.');
+    return; // Stop form submission
+  }
+
   const firstName = document.getElementById('first-name').value.trim();
   const secondName = document.getElementById('second-name').value.trim();
   const cityId = document.getElementById('city-id').value;
