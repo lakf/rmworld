@@ -374,14 +374,17 @@ function fetchCitiesAndCreateGlobe() {
 
       // Map users data to display
       const usersInfo = users.map(user => `
-        <div class="user-card">
-          <img src="${user.pictureURL}" alt="${user.firstName}'s picture" class="user-picture">
-          <div class="user-info">
-            <p class="user-name">${user.firstName} ${user.secondName}</p>
-            <p class="user-instagram">@${user.instagram}</p>
+        <a href="https://instagram.com/${user.instagram}" target="_blank" class="user-card-link">
+          <div class="user-card">
+            <img src="${user.pictureURL}" alt="${user.firstName}'s picture" class="user-picture">
+            <div class="user-info">
+              <p class="user-name">${user.firstName} ${user.secondName}</p>
+              <p class="user-instagram">@${user.instagram}</p>
+            </div>
           </div>
-        </div>
+        </a>
       `).join("");  // Join without extra spaces to avoid layout issues
+        // Join without extra spaces to avoid layout issues
 
       console.log("usersInfo: ", usersInfo);
 

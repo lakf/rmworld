@@ -6,6 +6,10 @@ html, body {
   overflow: hidden; /* Prevent scrolling outside the viewport */
 }
 
+body {
+  font-family: 'Arial', sans-serif;
+}
+
 input, select, textarea {
   font-size: 16px; /* Prevents zooming on mobile devices */
 }
@@ -222,6 +226,16 @@ input, select, textarea {
   align-items: center;
   border-bottom: 1px solid #eee;
   padding: 10px 0;
+}
+
+.user-card-link {
+  display: block; /* Ensure the link acts as a block element */
+  text-decoration: none; /* Remove default underline */
+  color: inherit; /* Ensure text color remains the same */
+}
+
+.user-card-link:hover {
+  opacity: 0.9; /* Optional: Add a hover effect to indicate it's clickable */
 }
 
 .user-picture {

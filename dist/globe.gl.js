@@ -971,8 +971,9 @@
                 users = _context3.sent;
                 // Map users data to display
                 usersInfo = users.map(function (user) {
-                  return "\n        <div class=\"user-card\">\n          <img src=\"".concat(user.pictureURL, "\" alt=\"").concat(user.firstName, "'s picture\" class=\"user-picture\">\n          <div class=\"user-info\">\n            <p class=\"user-name\">").concat(user.firstName, " ").concat(user.secondName, "</p>\n            <p class=\"user-instagram\">@").concat(user.instagram, "</p>\n          </div>\n        </div>\n      ");
+                  return "\n        <a href=\"https://instagram.com/".concat(user.instagram, "\" target=\"_blank\" class=\"user-card-link\">\n          <div class=\"user-card\">\n            <img src=\"").concat(user.pictureURL, "\" alt=\"").concat(user.firstName, "'s picture\" class=\"user-picture\">\n            <div class=\"user-info\">\n              <p class=\"user-name\">").concat(user.firstName, " ").concat(user.secondName, "</p>\n              <p class=\"user-instagram\">@").concat(user.instagram, "</p>\n            </div>\n          </div>\n        </a>\n      ");
                 }).join(""); // Join without extra spaces to avoid layout issues
+                // Join without extra spaces to avoid layout issues
                 console.log("usersInfo: ", usersInfo);
 
                 // Update the popup with city and user info
