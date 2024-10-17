@@ -13,11 +13,11 @@ const firebaseConfig = {
   };
   
   // Initialize Firebase app
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  admin.initializeApp(firebaseConfig);
+  const db = admin.firestore();
 
 // Load the JSON file
-const citiesData = JSON.parse(await readFile(new URL('assets/geonames-all-cities.json', import.meta.url)));
+// const citiesData = JSON.parse(await readFile(new URL('assets/geonames-all-cities.json', import.meta.url)));
 
 // Function to filter and upload cities to Firestore
 async function uploadCities() {
@@ -54,10 +54,36 @@ async function uploadCities() {
 }
 
 // Run the script
-uploadCities()
-  .then(() => {
-    console.log('Upload complete.');
-  })
-  .catch((error) => {
-    console.error('Error uploading cities: ', error);
-  });
+// uploadCities()
+//   .then(() => {
+//     console.log('Upload complete.');
+//   })
+//   .catch((error) => {
+//     console.error('Error uploading cities: ', error);
+//   });
+
+const participantsFilePath = './participants.json';
+
+// Function to upload participants to Firestore
+async function uploadParticipants() {
+  try {
+    // Read the participants.json file
+    const participants = JSON.parse(fs.readFileSync(participantsFilePath, 'utf8'));
+
+    // Iterate through participants array and upload each participant to Firestore
+    for (const participant of participants) {
+      // Add each participant as a document in Firestore
+      const docRef = db.collection('participants').doc(participant.bibNo);  // Use bibNo as document ID
+      await docRef.set(participant);
+
+      console.log(`Participant ${participant.firstName} ${participant.secondName} uploaded successfully.`);
+    }
+
+    console.log('All participants uploaded successfully.');
+  } catch (error) {
+    console.error('Error uploading participants:', error);
+  }
+}
+
+// Call the uploadParticipants function
+uploadParticipants();

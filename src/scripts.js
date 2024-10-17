@@ -37,31 +37,48 @@ function closePopup() {
 document.getElementById('close-join-form').addEventListener('click', closePopup);
 document.getElementById('close-remove-form').addEventListener('click', closePopup);
 
-let participants = [];
-
-// Fetch participants data when the script loads
-fetch('./participants.json')
-  .then(response => response.json())
-  .then(data => {
-    participants = data;
-  })
-  .catch(error => console.error('Error loading participants data:', error));
-
 // Function to check if a user exists in the participants list
-function isUserInParticipants(firstName, secondName) {
-  // Normalize inputs for case-insensitive comparison
-  const normalizedFirstName = firstName.toLowerCase();
-  const normalizedSecondName = secondName.toLowerCase();
+async function isUserInParticipants(firstName, secondName) {
+  // Normalize inputs to "FirstName LastName" format
+  const formattedFirstName = toTitleCase(firstName);
+  const formattedSecondName = toTitleCase(secondName);
 
-  // Check if the participant exists
-  return participants.some(participant => 
-    participant.firstName.toLowerCase() === normalizedFirstName &&
-    participant.secondName.toLowerCase() === normalizedSecondName
+  // Query Firestore for the formatted names
+  const participantsRef = collection(db, 'participants');
+  
+  const q = query(
+    participantsRef, 
+    where('firstName', '==', formattedFirstName),
+    where('secondName', '==', formattedSecondName)
   );
+
+  try {
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      console.log('User found in participants.');
+      return true;
+    } else {
+      console.log('User not found in participants.');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error checking Firestore:', error);
+    return false;
+  }
+}
+
+function toTitleCase(name) {
+  return name
+    .toLowerCase() // First convert everything to lowercase
+    .split(' ') // Split by space to handle names with multiple parts
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter of each word
+    .join(' '); // Join them back together with spaces
 }
 
 // Function to check if a user with the same first name, second name, and city already exists
 async function checkIfUserExists(firstName, secondName, cityId) {
+  console.log('Checking if user in same city with same name already exists');
   try {
     // Query the Firestore 'users' collection for the given firstName, secondName, and cityId
     const usersSnapshot = await db.collection('users')
@@ -84,6 +101,7 @@ async function checkIfUserExists(firstName, secondName, cityId) {
 
 // Function to check if a user with the same Instagram handle already exists
 async function checkIfInstagramExists(instagram) {
+  console.log('Checking if instagram handle already exists');
   try {
     // Query the Firestore 'users' collection for the given Instagram handle
     const usersSnapshot = await db.collection('users')
@@ -102,30 +120,56 @@ async function checkIfInstagramExists(instagram) {
   }
 }
 
+let joinFormSubmitting = false;
 // Update the image upload logic to use the cropped image blob
 document.getElementById('join-form').addEventListener('submit', async (event) => {
-  event.preventDefault();
+  event.preventDefault(); // Prevent the default form submission
+
+  console.log('Inside the join form.');
+
+  // Define a flag to track submission state
+  if (joinFormSubmitting) {
+    return; // If already submitting, exit the function
+  }
+  
+  joinFormSubmitting = true; // Set the flag to true
+
+  // Disable the join button
+  const joinButton = document.getElementById('join-btn');
+  joinButton.disabled = true; // Disable the button
+
+  // Show loading indicator
+  document.getElementById('loading-indicator').style.display = 'block';
 
   const firstName = document.getElementById('first-name').value.trim();
   const secondName = document.getElementById('second-name').value.trim();
   const cityId = document.getElementById('city-id').value;
   const instagram = document.getElementById('instagram').value.trim();
-  const pictureInput = document.getElementById('picture');  // Get the picture input element
+  const pictureInput = document.getElementById('picture');
 
   if (!isUserInParticipants(firstName, secondName)) {
     alert('User not found in marathon participants. Please check your name and try again.');
+    joinButton.disabled = false; // Re-enable the button
+    joinFormSubmitting = false; // Reset the flag
+    document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
     return; // Stop form submission
   }
 
   const userExists = await checkIfUserExists(firstName, secondName, cityId);
   if (userExists) {
     alert('A user with the same name in the selected city already exists. Please try again.');
+    joinButton.disabled = false; // Re-enable the button
+    joinFormSubmitting = false; // Reset the flag
+    document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
     return; // Stop form submission
   }
 
   const instagramExists = await checkIfInstagramExists(instagram);
   if (instagramExists) {
     alert('This Instagram handle is already associated with another user. Please use a different one.');
+    joinButton.disabled = false; // Re-enable the button
+    joinFormSubmitting = false; // Reset the flag
+    document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
     return; // Stop form submission
   }
 
@@ -134,15 +178,12 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
 
     // Check if a picture file was selected
     if (pictureInput.files && pictureInput.files[0]) {
-      const pictureFile = pictureInput.files[0];  // Access the selected file
-      
+      const pictureFile = pictureInput.files[0];
       const storageRef = firebase.storage().ref();
       const pictureRef = storageRef.child(`profile_pictures/${firstName}_${secondName}_${Date.now()}`);
 
       // Upload the selected picture file
       const uploadSnapshot = await pictureRef.put(pictureFile);
-
-      // Get the image's download URL
       pictureURL = await uploadSnapshot.ref.getDownloadURL();
     }
 
@@ -155,24 +196,36 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
       pictureURL: pictureURL || null
     });
 
+    console.log('Calling incrementCityUsers for cityId:', cityId);
+    await incrementCityUsers(cityId);
+
     alert('Thank you for joining!');
+    loadCityData();
     closePopup();
   } catch (error) {
     console.error('Error adding user or uploading image:', error);
     alert('Failed to join. Please try again.');
+  } finally {
+    // Re-enable the button and hide loading in all scenarios
+    joinButton.disabled = false;
+    joinFormSubmitting = false; // Reset the flag
+    document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
   }
 });
 
 async function incrementCityUsers(cityId) {
+  console.log('In increment city users');
   try {
     const cityRef = db.collection('cities').doc(cityId);
 
     await db.runTransaction(async (transaction) => {
       const cityDoc = await transaction.get(cityRef);
 
-      if(!cityDoc.exists) {
-        console.error('City document does not exist!');
+      if (!cityDoc.exists) {
+        console.error(`City document with ID ${cityId} does not exist!`);
         return;
+      } else {
+        console.log(`City document with ID ${cityId} exists. Proceeding to update.`);
       }
 
       const currentNumberOfUsers = cityDoc.data().numberOfUsers || 0;
@@ -181,7 +234,7 @@ async function incrementCityUsers(cityId) {
         numberOfUsers: currentNumberOfUsers + 1
       });
     });
-    console.log('City user coutn incremented successfuly.');
+    console.log('City user count incremented successfully.');
   } catch (error) {
     console.error('Error incrementing city users:', error);
   }
@@ -203,7 +256,7 @@ document.getElementById('remove-form').addEventListener('submit', async (event) 
 
     // Step 2: Handle if no user is found
     if (usersSnapshot.empty) {
-      alert("No user found with the given name. Please check the details.");
+      alert('No user found with the given name. Please check the details.');
       return; // Stop submission
     }
 
@@ -440,11 +493,25 @@ async function loadGlobeData() {
   });
 }
 
-function participantExists(secondName, bibNumber) {
-  return participants.some(participant => 
-    participant.secondName.toLowerCase() === secondName.toLowerCase() && 
-    participant.bibNo === bibNumber
-  );
+async function participantExists(secondName, bibNumber) {
+  // Normalize inputs for comparison
+  const normalizedSecondName = normalizeName(secondName);
+
+  // Reference to Firestore collection
+  const participantsRef = firebase.firestore().collection('participants');
+
+  // Query Firestore to find participant by surname and bib number
+  const querySnapshot = await participantsRef
+    .where('secondName', '==', normalizedSecondName)
+    .where('bibNo', '==', bibNumber)
+    .get();
+
+  return !querySnapshot.empty; // Returns true if participant exists
+}
+
+// Function to normalize names (capitalize first letter of each name)
+function normalizeName(name) {
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
 
 // Form submission logic for the overlay
@@ -454,7 +521,10 @@ document.getElementById('participant-check-form').addEventListener('submit', asy
   const secondName = document.getElementById('surname').value.trim();
   const bibNumber = document.getElementById('bib-number').value.trim();
 
-  if (participantExists(secondName, bibNumber)) {
+  // Check if participant exists in Firestore
+  const exists = await participantExists(secondName, bibNumber);
+  
+  if (exists) {
     document.getElementById('overlay-form').style.display = 'none'; // Hide overlay form
   } else {
     const errorMessageDiv = document.getElementById('error-message');

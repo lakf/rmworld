@@ -70,7 +70,7 @@ body {
   top: 50%; /* Center vertically */
   left: 50%; /* Center horizontally */
   transform: translate(-50%, -50%); /* Adjust position to the exact center */
-  width: 300px;
+  /* width: 300px; */
   max-width: 90%; /* Responsive width */
   padding: 20px;
   background-color: white;
@@ -146,7 +146,7 @@ body {
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  width: 300px; /* Fixed width for desktop */
+  width: 300px; 
   max-width: 90%; /* Responsive design for mobile */
   z-index: 1000;
 }
@@ -214,19 +214,38 @@ body {
 
 /* Styling for the Participant Check Form */
 .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: fixed;          /* Fixed position for the overlay */
+  top: 0;                  /* Start from the top of the viewport */
+  left: 0;                 /* Start from the left of the viewport */
+  width: 100%;             /* Full width for the overlay */
+  height: 100%;            /* Full height for the overlay */
   background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Ensure it is on top of other elements */
+  display: flex;           /* Use flexbox for centering content */
+  justify-content: center; /* Center content horizontally */
+  align-items: center;     /* Center content vertically */
+  z-index: 1000;          /* Ensure it is on top of other elements */
+}
+
+.overlay h2 {
+  margin-bottom: 15px;
+}
+
+.overlay label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.overlay input[type="text"] {
+  width: 100%; /* Full width for inputs */
+  max-width: 90%; /* Allow some space on the sides */
+  margin: 0 auto 10px auto; /* Center input fields */
+  padding: 8px;
+  border: 1px solid #ccc;
+  display: block; /* Ensure it's block-level to center with margin */
 }
 
 #participant-check-form {
+  justify-self: center;
   background-color: #ffffff; /* White background for the form */
   border-radius: 10px; /* Rounded corners */
   padding: 20px; /* Space inside the form */
@@ -262,23 +281,4 @@ body {
   margin-top: 10px; /* Space above error messages */
 }
 
-/* Media Queries for Responsive Design */
-@media (max-width: 600px) {
-  .popup-card {
-      width: 90%; /* Full width for smaller screens */
-      padding: 15px; /* Less padding on smaller screens */
-  }
 
-  .btn {
-      font-size: 14px; /* Smaller button font size */
-      padding: 8px 16px; /* Adjust button padding */
-  }
-
-  #header {
-      padding: 10px; /* Less padding in header */
-  }
-
-  #title h1 {
-      font-size: 1.5em; /* Smaller title font size */
-  }
-}
