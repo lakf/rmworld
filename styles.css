@@ -170,6 +170,23 @@ input, select, textarea {
   z-index: 1000;
 }
 
+#city-popup {
+  display: none;
+  position: fixed;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust position to the exact center */
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 300px;
+  max-width: 90%; /* Responsive width for mobile devices */
+  z-index: 1000;
+  max-height: 80vh; /* Prevent the popup from being too tall */
+  overflow-y: auto; /* Allow scrolling if the content exceeds the height */
+}
+
 #city-name {
   font-size: 1.5em;
   margin-bottom: 10px;
@@ -179,6 +196,25 @@ input, select, textarea {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  max-height: 250px; /* Limit the height to fit 5 users comfortably */
+  overflow-y: auto; /* Enable vertical scrolling if there are more than 5 users */
+}
+
+#city-info::-webkit-scrollbar {
+  width: 8px;
+}
+
+#city-info::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+#city-info::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+#city-info::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .user-card {
