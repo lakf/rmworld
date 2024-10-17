@@ -40,8 +40,8 @@ document.getElementById('close-remove-form').addEventListener('click', closePopu
 // Function to check if a user exists in the participants list
 async function isUserInParticipants(firstName, secondName) {
   // Normalize inputs to "FirstName LastName" format
-  const formattedFirstName = toTitleCase(firstName);
-  const formattedSecondName = toTitleCase(secondName);
+  const formattedFirstName = firstName.toLowerCase();
+  const formattedSecondName = secondName.toLowerCase();
 
   // Query Firestore for the formatted names
   const participantsRef = collection(db, 'participants');
@@ -56,6 +56,7 @@ async function isUserInParticipants(firstName, secondName) {
     const querySnapshot = await getDocs(q);
     
     if (!querySnapshot.empty) {
+      console.log(querySnapshot);
       console.log('User found in participants.');
       return true;
     } else {
@@ -560,7 +561,7 @@ async function loadGlobeData() {
 
 async function participantExists(secondName, bibNumber) {
   // Normalize inputs for comparison
-  const normalizedSecondName = normalizeName(secondName);
+  const normalizedSecondName = secondName.toLowerCase();
 
   // Reference to Firestore collection
   const participantsRef = firebase.firestore().collection('participants');
