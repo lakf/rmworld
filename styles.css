@@ -1,13 +1,27 @@
-body {
+html, body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  overflow-y: auto; /* Allow vertical scrolling if necessary */
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* Prevent scrolling outside the viewport */
 }
 
+/* Update #max-container to take up the full height and width */
 #max-container {
   position: relative;
   width: 100vw;
-  min-height: 100vh; /* Use min-height instead of height */
+  height: 100vh;
+  overflow: hidden; /* Ensure the content doesn't overflow */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Set #globeViz to maintain aspect ratio and scale properly */
+#globeViz {
+  flex: 1;
+  width: 100%;
+  height: auto; /* Ensure the height scales with the aspect ratio */
+  object-fit: cover; /* Ensures the background covers the entire container */
 }
 
 #header {
