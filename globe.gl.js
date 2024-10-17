@@ -750,6 +750,44 @@
       return _ref.apply(this, arguments);
     };
   }());
+  document.addEventListener('DOMContentLoaded', function () {
+    var cityInput = document.getElementById('city');
+    var cityError = document.getElementById('city-error');
+    var cityList = document.getElementById('city-list');
+
+    // 1. Show the dropdown immediately when the user clicks into the city input (on focus)
+    cityInput.addEventListener('focus', function () {
+      cityError.style.display = 'none'; // Hide any previous error message
+      // Trigger an input event to open the dropdown list immediately
+      var event = new Event('input', {
+        bubbles: true
+      });
+      cityInput.dispatchEvent(event);
+    });
+
+    // Validation logic to check if the input matches a city from the datalist
+    cityInput.addEventListener('blur', function () {
+      validateCity(); // Call validation when the user clicks out
+    });
+    function validateCity() {
+      var selectedCity = cityInput.value.trim();
+      var isValidCity = false;
+
+      // Check if the entered city matches one of the datalist options
+      for (var i = 0; i < cityList.options.length; i++) {
+        if (selectedCity === cityList.options[i].value) {
+          isValidCity = true;
+          break;
+        }
+      }
+      if (!isValidCity) {
+        cityError.style.display = 'block'; // Show the error message if invalid
+        cityInput.value = ''; // Optionally clear the input
+      } else {
+        cityError.style.display = 'none'; // Hide the error message if valid
+      }
+    }
+  });
   function incrementCityUsers(_x8) {
     return _incrementCityUsers.apply(this, arguments);
   } // Handle "Remove" form submission (communicate with Firebase)
