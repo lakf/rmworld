@@ -1,13 +1,13 @@
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
-  overflow: hidden;
+  overflow-y: auto; /* Allow vertical scrolling if necessary */
 }
 
 #max-container {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh; /* Use min-height instead of height */
 }
 
 #header {
