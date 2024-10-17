@@ -236,7 +236,44 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
     }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const cityInput = document.getElementById('city');
+  const cityError = document.getElementById('city-error');
+  const cityList = document.getElementById('city-list');
 
+  // 1. Show the dropdown immediately when the user clicks into the city input (on focus)
+  cityInput.addEventListener('focus', () => {
+    cityError.style.display = 'none'; // Hide any previous error message
+    // Trigger an input event to open the dropdown list immediately
+    const event = new Event('input', { bubbles: true });
+    cityInput.dispatchEvent(event);
+  });
+
+  // Validation logic to check if the input matches a city from the datalist
+  cityInput.addEventListener('blur', () => {
+    validateCity(); // Call validation when the user clicks out
+  });
+
+  function validateCity() {
+    const selectedCity = cityInput.value.trim();
+    let isValidCity = false;
+
+    // Check if the entered city matches one of the datalist options
+    for (let i = 0; i < cityList.options.length; i++) {
+      if (selectedCity === cityList.options[i].value) {
+        isValidCity = true;
+        break;
+      }
+    }
+
+    if (!isValidCity) {
+      cityError.style.display = 'block'; // Show the error message if invalid
+      cityInput.value = ''; // Optionally clear the input
+    } else {
+      cityError.style.display = 'none'; // Hide the error message if valid
+    }
+  }
+});
 
 async function incrementCityUsers(cityId) {
   console.log('In increment city users');
