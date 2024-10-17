@@ -472,8 +472,8 @@
         while (1) switch (_context5.prev = _context5.next) {
           case 0:
             // Normalize inputs to "FirstName LastName" format
-            formattedFirstName = toTitleCase(firstName);
-            formattedSecondName = toTitleCase(secondName); // Query Firestore for the formatted names
+            formattedFirstName = firstName.toLowerCase();
+            formattedSecondName = secondName.toLowerCase(); // Query Firestore for the formatted names
             participantsRef = collection(db, 'participants');
             q = query(participantsRef, where('firstName', '==', formattedFirstName), where('secondName', '==', formattedSecondName));
             _context5.prev = 4;
@@ -482,37 +482,30 @@
           case 7:
             querySnapshot = _context5.sent;
             if (querySnapshot.empty) {
-              _context5.next = 13;
+              _context5.next = 14;
               break;
             }
+            console.log(querySnapshot);
             console.log('User found in participants.');
             return _context5.abrupt("return", true);
-          case 13:
+          case 14:
             console.log('User not found in participants.');
             return _context5.abrupt("return", false);
-          case 15:
-            _context5.next = 21;
+          case 16:
+            _context5.next = 22;
             break;
-          case 17:
-            _context5.prev = 17;
+          case 18:
+            _context5.prev = 18;
             _context5.t0 = _context5["catch"](4);
             console.error('Error checking Firestore:', _context5.t0);
             return _context5.abrupt("return", false);
-          case 21:
+          case 22:
           case "end":
             return _context5.stop();
         }
-      }, _callee5, null, [[4, 17]]);
+      }, _callee5, null, [[4, 18]]);
     }));
     return _isUserInParticipants.apply(this, arguments);
-  }
-  function toTitleCase(name) {
-    return name.toLowerCase() // First convert everything to lowercase
-    .split(' ') // Split by space to handle names with multiple parts
-    .map(function (word) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    }) // Capitalize first letter of each word
-    .join(' '); // Join them back together with spaces
   }
 
   // Function to check if a user with the same first name, second name, and city already exists
@@ -1239,7 +1232,7 @@
         while (1) switch (_context15.prev = _context15.next) {
           case 0:
             // Normalize inputs for comparison
-            normalizedSecondName = normalizeName(secondName); // Reference to Firestore collection
+            normalizedSecondName = secondName.toLowerCase(); // Reference to Firestore collection
             participantsRef = firebase.firestore().collection('participants'); // Query Firestore to find participant by surname and bib number
             _context15.next = 4;
             return participantsRef.where('secondName', '==', normalizedSecondName).where('bibNo', '==', bibNumber).get();
@@ -1253,9 +1246,6 @@
       }, _callee15);
     }));
     return _participantExists.apply(this, arguments);
-  }
-  function normalizeName(name) {
-    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
   }
 
   // Form submission logic for the overlay
