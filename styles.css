@@ -8,12 +8,12 @@ html, body {
 
 /* Update #max-container to take up the full height and width */
 #max-container {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
-  overflow: hidden; /* Ensure the content doesn't overflow */
-  display: flex;
-  flex-direction: column;
+  overflow: auto; /* Ensure the content doesn't overflow */
 }
 
 /* Set #globeViz to maintain aspect ratio and scale properly */
