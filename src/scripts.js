@@ -121,115 +121,122 @@ async function checkIfInstagramExists(instagram) {
 }
 
 let joinFormSubmitting = false;
-// Update the image upload logic to use the cropped image blob
+
 document.getElementById('join-form').addEventListener('submit', async (event) => {
-  event.preventDefault(); // Prevent the default form submission
+    event.preventDefault(); // Prevent the default form submission
 
-  console.log('Inside the join form.');
-
-  // Define a flag to track submission state
-  if (joinFormSubmitting) {
-    return; // If already submitting, exit the function
-  }
-  
-  joinFormSubmitting = true; // Set the flag to true
-
-  // Disable the join button
-  const joinButton = document.getElementById('join-btn');
-  joinButton.disabled = true; // Disable the button
-
-  // Show loading indicator
-  document.getElementById('loading-indicator').style.display = 'block';
-
-  const cityInput = document.getElementById('city');
-  const cityList = document.getElementById('city-list').options;
-  const selectedCity = cityInput.value;
-
-  // Validate the entered city matches one of the options
-  let isValidCity = false;
-  for (let i = 0; i < cityList.length; i++) {
-    if (selectedCity === cityList[i].value) {
-      isValidCity = true;
-      break;
-    }
-  }
-
-  if (!isValidCity) {
-    alert('Please select a city from the list.');
-    return; // Stop form submission
-  }
-
-  const firstName = document.getElementById('first-name').value.trim();
-  const secondName = document.getElementById('second-name').value.trim();
-  const cityId = document.getElementById('city-id').value;
-  const instagram = document.getElementById('instagram').value.trim();
-  const pictureInput = document.getElementById('picture');
-
-  if (!isUserInParticipants(firstName, secondName)) {
-    alert('User not found in marathon participants. Please check your name and try again.');
-    joinButton.disabled = false; // Re-enable the button
-    joinFormSubmitting = false; // Reset the flag
-    document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
-    return; // Stop form submission
-  }
-
-  const userExists = await checkIfUserExists(firstName, secondName, cityId);
-  if (userExists) {
-    alert('A user with the same name in the selected city already exists. Please try again.');
-    joinButton.disabled = false; // Re-enable the button
-    joinFormSubmitting = false; // Reset the flag
-    document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
-    return; // Stop form submission
-  }
-
-  const instagramExists = await checkIfInstagramExists(instagram);
-  if (instagramExists) {
-    alert('This Instagram handle is already associated with another user. Please use a different one.');
-    joinButton.disabled = false; // Re-enable the button
-    joinFormSubmitting = false; // Reset the flag
-    document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
-    return; // Stop form submission
-  }
-
-  try {
-    let pictureURL = null;
-
-    // Check if a picture file was selected
-    if (pictureInput.files && pictureInput.files[0]) {
-      const pictureFile = pictureInput.files[0];
-      const storageRef = firebase.storage().ref();
-      const pictureRef = storageRef.child(`profile_pictures/${firstName}_${secondName}_${Date.now()}`);
-
-      // Upload the selected picture file
-      const uploadSnapshot = await pictureRef.put(pictureFile);
-      pictureURL = await uploadSnapshot.ref.getDownloadURL();
+    if (joinFormSubmitting) {
+        return; // If already submitting, prevent duplicate submissions
     }
 
-    // Continue with adding user to Firestore as before
-    const newUserRef = await db.collection('users').add({
-      firstName,
-      secondName,
-      cityId,
-      instagram: instagram.toLowerCase(),
-      pictureURL: pictureURL || null
-    });
+    joinFormSubmitting = true; // Set the flag to true, to indicate the form is being submitted
 
-    console.log('Calling incrementCityUsers for cityId:', cityId);
-    await incrementCityUsers(cityId);
+    console.log('Inside the join form.');
 
-    alert('Thank you for joining!');
-    loadCityData();
-    closePopup();
-  } catch (error) {
-    console.error('Error adding user or uploading image:', error);
-    alert('Failed to join. Please try again.');
-  } finally {
-    // Re-enable the button and hide loading in all scenarios
-    joinButton.disabled = false;
-    joinFormSubmitting = false; // Reset the flag
-    document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
-  }
+    // City validation logic
+    const cityInput = document.getElementById('city');
+    const cityList = document.getElementById('city-list').options;
+    const selectedCity = cityInput.value.trim();
+    const cityError = document.getElementById('city-error');
+    
+    let isValidCity = false;
+
+    // Loop through the options in the datalist to check for a match
+    for (let i = 0; i < cityList.length; i++) {
+      if (selectedCity === cityList[i].value) {
+        isValidCity = true;
+        break;
+      }
+    }
+
+    if (!isValidCity) {
+      cityError.style.display = 'block'; // Show the error message
+      cityInput.value = ''; // Optionally clear the input
+      joinFormSubmitting = false; // Reset the flag
+      return; // Stop form submission if city is invalid
+    } else {
+      cityError.style.display = 'none'; // Hide the error message if valid
+    }
+
+    // Continue with the rest of the form submission logic if the city is valid
+    const joinButton = document.getElementById('join-btn');
+    joinButton.disabled = true; // Disable the button
+    document.getElementById('loading-indicator').style.display = 'block'; // Show loading indicator
+
+    const firstName = document.getElementById('first-name').value.trim();
+    const secondName = document.getElementById('second-name').value.trim();
+    const cityId = document.getElementById('city-id').value;
+    const instagram = document.getElementById('instagram').value.trim();
+    const pictureInput = document.getElementById('picture');
+
+    // Check if the user exists in participants
+    if (!isUserInParticipants(firstName, secondName)) {
+      alert('User not found in marathon participants. Please check your name and try again.');
+      joinButton.disabled = false; // Re-enable the button
+      joinFormSubmitting = false; // Reset the flag
+      document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
+      return; // Stop form submission
+    }
+
+    const userExists = await checkIfUserExists(firstName, secondName, cityId);
+    if (userExists) {
+      alert('A user with the same name in the selected city already exists. Please try again.');
+      joinButton.disabled = false; // Re-enable the button
+      joinFormSubmitting = false; // Reset the flag
+      document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
+      return; // Stop form submission
+    }
+
+    const instagramExists = await checkIfInstagramExists(instagram);
+    if (instagramExists) {
+      alert('This Instagram handle is already associated with another user. Please use a different one.');
+      joinButton.disabled = false; // Re-enable the button
+      joinFormSubmitting = false; // Reset the flag
+      document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
+      return; // Stop form submission
+    }
+
+    try {
+      let pictureURL = null;
+
+      // Check if a picture file was selected
+      if (pictureInput.files && pictureInput.files[0]) {
+        const pictureFile = pictureInput.files[0];
+        const storageRef = firebase.storage().ref();
+        const pictureRef = storageRef.child(`profile_pictures/${firstName}_${secondName}_${Date.now()}`);
+
+        // Upload the selected picture file
+        const uploadSnapshot = await pictureRef.put(pictureFile);
+        pictureURL = await uploadSnapshot.ref.getDownloadURL();
+      }
+
+      // Continue with adding user to Firestore as before
+      const newUserRef = await db.collection('users').add({
+        firstName,
+        secondName,
+        cityId,
+        instagram: instagram.toLowerCase(),
+        pictureURL: pictureURL || null
+      });
+
+      console.log('Calling incrementCityUsers for cityId:', cityId);
+      await incrementCityUsers(cityId);
+
+      alert('Thank you for joining!');
+      loadCityData();
+      closePopup();
+    } catch (error) {
+      console.error('Error adding user or uploading image:', error);
+      alert('Failed to join. Please try again.');
+    } finally {
+      // Re-enable the button and hide loading in all scenarios
+      joinButton.disabled = false;
+      joinFormSubmitting = false; // Reset the flag
+      document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
+    }
 });
+
+
 
 async function incrementCityUsers(cityId) {
   console.log('In increment city users');
@@ -558,6 +565,3 @@ document.getElementById('participant-check-form').addEventListener('submit', asy
 window.onload = loadCityData;
 
 loadCityMapping('city-mapping.json');
-
-
-
