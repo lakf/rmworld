@@ -596,7 +596,7 @@
   // Update the image upload logic to use the cropped image blob
   document.getElementById('join-form').addEventListener('submit', /*#__PURE__*/function () {
     var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(event) {
-      var joinButton, firstName, secondName, cityId, instagram, pictureInput, userExists, instagramExists, pictureURL, pictureFile, storageRef, pictureRef, uploadSnapshot;
+      var joinButton, cityInput, cityList, selectedCity, isValidCity, i, firstName, secondName, cityId, instagram, pictureInput, userExists, instagramExists, pictureURL, pictureFile, storageRef, pictureRef, uploadSnapshot;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
@@ -619,13 +619,41 @@
 
             // Show loading indicator
             document.getElementById('loading-indicator').style.display = 'block';
+            cityInput = document.getElementById('city');
+            cityList = document.getElementById('city-list').options;
+            selectedCity = cityInput.value; // Validate the entered city matches one of the options
+            isValidCity = false;
+            i = 0;
+          case 13:
+            if (!(i < cityList.length)) {
+              _context.next = 20;
+              break;
+            }
+            if (!(selectedCity === cityList[i].value)) {
+              _context.next = 17;
+              break;
+            }
+            isValidCity = true;
+            return _context.abrupt("break", 20);
+          case 17:
+            i++;
+            _context.next = 13;
+            break;
+          case 20:
+            if (isValidCity) {
+              _context.next = 23;
+              break;
+            }
+            alert('Please select a city from the list.');
+            return _context.abrupt("return");
+          case 23:
             firstName = document.getElementById('first-name').value.trim();
             secondName = document.getElementById('second-name').value.trim();
             cityId = document.getElementById('city-id').value;
             instagram = document.getElementById('instagram').value.trim();
             pictureInput = document.getElementById('picture');
             if (isUserInParticipants(firstName, secondName)) {
-              _context.next = 19;
+              _context.next = 34;
               break;
             }
             alert('User not found in marathon participants. Please check your name and try again.');
@@ -633,13 +661,13 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 19:
-            _context.next = 21;
+          case 34:
+            _context.next = 36;
             return checkIfUserExists(firstName, secondName, cityId);
-          case 21:
+          case 36:
             userExists = _context.sent;
             if (!userExists) {
-              _context.next = 28;
+              _context.next = 43;
               break;
             }
             alert('A user with the same name in the selected city already exists. Please try again.');
@@ -647,13 +675,13 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 28:
-            _context.next = 30;
+          case 43:
+            _context.next = 45;
             return checkIfInstagramExists(instagram);
-          case 30:
+          case 45:
             instagramExists = _context.sent;
             if (!instagramExists) {
-              _context.next = 37;
+              _context.next = 52;
               break;
             }
             alert('This Instagram handle is already associated with another user. Please use a different one.');
@@ -661,26 +689,26 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 37:
-            _context.prev = 37;
+          case 52:
+            _context.prev = 52;
             pictureURL = null; // Check if a picture file was selected
             if (!(pictureInput.files && pictureInput.files[0])) {
-              _context.next = 49;
+              _context.next = 64;
               break;
             }
             pictureFile = pictureInput.files[0];
             storageRef = firebase.storage().ref();
             pictureRef = storageRef.child("profile_pictures/".concat(firstName, "_").concat(secondName, "_").concat(Date.now())); // Upload the selected picture file
-            _context.next = 45;
+            _context.next = 60;
             return pictureRef.put(pictureFile);
-          case 45:
+          case 60:
             uploadSnapshot = _context.sent;
-            _context.next = 48;
+            _context.next = 63;
             return uploadSnapshot.ref.getDownloadURL();
-          case 48:
+          case 63:
             pictureURL = _context.sent;
-          case 49:
-            _context.next = 51;
+          case 64:
+            _context.next = 66;
             return db.collection('users').add({
               firstName: firstName,
               secondName: secondName,
@@ -688,34 +716,34 @@
               instagram: instagram.toLowerCase(),
               pictureURL: pictureURL || null
             });
-          case 51:
+          case 66:
             _context.sent;
             console.log('Calling incrementCityUsers for cityId:', cityId);
-            _context.next = 55;
+            _context.next = 70;
             return incrementCityUsers(cityId);
-          case 55:
+          case 70:
             alert('Thank you for joining!');
             loadCityData();
             closePopup();
-            _context.next = 64;
+            _context.next = 79;
             break;
-          case 60:
-            _context.prev = 60;
-            _context.t0 = _context["catch"](37);
+          case 75:
+            _context.prev = 75;
+            _context.t0 = _context["catch"](52);
             console.error('Error adding user or uploading image:', _context.t0);
             alert('Failed to join. Please try again.');
-          case 64:
-            _context.prev = 64;
+          case 79:
+            _context.prev = 79;
             // Re-enable the button and hide loading in all scenarios
             joinButton.disabled = false;
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
-            return _context.finish(64);
-          case 69:
+            return _context.finish(79);
+          case 84:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[37, 60, 64, 69]]);
+      }, _callee, null, [[52, 75, 79, 84]]);
     }));
     return function (_x7) {
       return _ref.apply(this, arguments);
