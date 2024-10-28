@@ -50,13 +50,24 @@
         <label for="second-name">Surname</label>
         <input type="text" id="second-name" name="second-name" required>
     
-        <label for="city">City (>100k pop.)</label>
-        <input type="text" id="city" name="city" list="city-list" placeholder="Type then choose from menu" autocomplete="on" required>
-        <datalist id="city-list"></datalist>
-        <span id="city-error" style="color:red; display:none;">Please choose city from dropdown menu.</span>
+        <label for="country">Country</label>
+        <input type="text" id="country" name="country" list="country-list" placeholder="Type then choose from menu" autocomplete="on" required>
+        <datalist id="country-list"></datalist>
+        <span id="country-error" style="color:red; display:none;">Please choose country from dropdown menu.</span>
+
+        <div id="state-container" style="display: none;">
+          <label for="state">State</label>
+          <input type="text" id="state" name="state" list="state-list" placeholder="Type then choose from menu" autocomplete="on">
+          <datalist id="state-list"></datalist>
+          <span id="state-error" style="color:red; display:none;">Please choose state from dropdown menu.</span>
+        </div>
     
         <!-- Hidden field to store the selected city ID -->
-        <input type="hidden" id="city-id" name="city-id" />
+        <input type="hidden" id="country-id" name="country-id" />
+        <input type="hidden" id="state-id" name="state-id" />
+
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" required>
     
         <!-- Image upload and cropping section -->
         <label for="picture">Upload Picture</label>
@@ -89,10 +100,10 @@
       </form>
     </div>
 
-    <div id="city-popup" class="popup-card">
-      <h2 id="city-name"></h2>
-      <div id="city-info"></div>
-      <button class="btn" id="city-close-btn">Close</button>
+    <div id="location-popup" class="popup-card">
+      <h2 id="location-name"></h2>
+      <div id="location-info"></div>
+      <button class="btn" id="location-close-btn">Close</button>
     </div>
     
     <div id="image-modal" class="image-modal">

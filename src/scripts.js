@@ -78,18 +78,19 @@ function toTitleCase(name) {
 }
 
 // Function to check if a user with the same first name, second name, and city already exists
-async function checkIfUserExists(firstName, secondName, cityId) {
-  console.log('Checking if user in same city with same name already exists');
+async function checkIfUserExists(firstName, secondName, locationId) {
+  console.log('Checking if user in same location with same name already exists');
   try {
     // Query the Firestore 'users' collection for the given firstName, secondName, and cityId
     const usersSnapshot = await db.collection('users')
       .where('firstName', '==', firstName)
       .where('secondName', '==', secondName)
-      .where('cityId', '==', cityId)
+      .where('locationId', '==', locationId)
       .get();
 
     // If the query returns any documents, a user already exists
     if (!usersSnapshot.empty) {
+      console.log("existing users: ", usersSnapshot)
       return true;  // User exists
     } else {
       return false; // No user found
@@ -97,6 +98,17 @@ async function checkIfUserExists(firstName, secondName, cityId) {
   } catch (error) {
     console.error('Error checking for existing user: ', error);
     return false;  // Return false in case of error
+  }
+}
+
+document.getElementById('country').addEventListener('input', toggleStateInput);
+function toggleStateInput() {
+  const countryInput = document.getElementById('country').value;
+  const stateContainer = document.getElementById('state-container');
+  if (countryInput === 'United States') {
+      stateContainer.style.display = 'block';
+  } else {
+      stateContainer.style.display = 'none';
   }
 }
 
@@ -135,28 +147,28 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
     console.log('Inside the join form.');
 
     // City validation logic
-    const cityInput = document.getElementById('city');
-    const cityList = document.getElementById('city-list').options;
-    const selectedCity = cityInput.value.trim();
-    const cityError = document.getElementById('city-error');
+    const countryInput = document.getElementById('country');
+    const countryList = document.getElementById('country-list').options;
+    const selectedCountry = countryInput.value.trim();
+    const countryError = document.getElementById('country-error');
     
-    let isValidCity = false;
+    let isValidCountry = false;
 
     // Loop through the options in the datalist to check for a match
-    for (let i = 0; i < cityList.length; i++) {
-      if (selectedCity === cityList[i].value) {
-        isValidCity = true;
+    for (let i = 0; i < countryList.length; i++) {
+      if (selectedCountry === countryList[i].value) {
+        isValidCountry = true;
         break;
       }
     }
 
-    if (!isValidCity) {
-      cityError.style.display = 'block'; // Show the error message
-      cityInput.value = ''; // Optionally clear the input
+    if (!isValidCountry) {
+      countryError.style.display = 'block'; // Show the error message
+      countryInput.value = ''; // Optionally clear the input
       joinFormSubmitting = false; // Reset the flag
       return; // Stop form submission if city is invalid
     } else {
-      cityError.style.display = 'none'; // Hide the error message if valid
+      countryError.style.display = 'none'; // Hide the error message if valid
     }
 
     // Continue with the rest of the form submission logic if the city is valid
@@ -166,9 +178,11 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
 
     const firstName = document.getElementById('first-name').value.trim();
     const secondName = document.getElementById('second-name').value.trim();
-    const cityId = document.getElementById('city-id').value;
+    const countryId = document.getElementById('country-id').value;
+    const stateId = document.getElementById('state-id').value;
     const instagram = document.getElementById('instagram').value.trim();
     const pictureInput = document.getElementById('picture');
+    const cityInput = document.getElementById('city').value.trim();
 
     // Check if the user exists in participants
     if (!isUserInParticipants(firstName, secondName)) {
@@ -179,7 +193,8 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
       return; // Stop form submission
     }
 
-    const userExists = await checkIfUserExists(firstName, secondName, cityId);
+    const locationId = stateId || countryId;
+    const userExists = await checkIfUserExists(firstName, secondName, locationId);
     if (userExists) {
       alert('A user with the same name in the selected city already exists. Please try again.');
       joinButton.disabled = false; // Re-enable the button
@@ -215,13 +230,14 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
       const newUserRef = await db.collection('users').add({
         firstName,
         secondName,
-        cityId,
+        locationId: stateId || countryId,
         instagram: instagram.toLowerCase(),
-        pictureURL: pictureURL || null
+        pictureURL: pictureURL || null,
+        cityName: cityInput
       });
 
-      console.log('Calling incrementCityUsers for cityId:', cityId);
-      await incrementCityUsers(cityId);
+      console.log('Calling incrementLocationUsers for locationId:', locationId);
+      await incrementLocationUsers(locationId);
 
       alert('Thank you for joining!');
       loadCityData();
@@ -238,68 +254,68 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  const cityInput = document.getElementById('city');
-  const cityError = document.getElementById('city-error');
-  const cityList = document.getElementById('city-list');
+  const countryInput = document.getElementById('country');
+  const countryError = document.getElementById('country-error');
+  const countryList = document.getElementById('country-list');
 
   // 1. Show the dropdown immediately when the user clicks into the city input (on focus)
-  cityInput.addEventListener('focus', () => {
-    cityError.style.display = 'none'; // Hide any previous error message
+  countryInput.addEventListener('focus', () => {
+    countryError.style.display = 'none'; // Hide any previous error message
     // Trigger an input event to open the dropdown list immediately
     const event = new Event('input', { bubbles: true });
-    cityInput.dispatchEvent(event);
+    countryInput.dispatchEvent(event);
   });
 
   // Validation logic to check if the input matches a city from the datalist
-  cityInput.addEventListener('blur', () => {
-    validateCity(); // Call validation when the user clicks out
+  countryInput.addEventListener('blur', () => {
+    validateCountry(); // Call validation when the user clicks out
   });
 
-  function validateCity() {
-    const selectedCity = cityInput.value.trim();
-    let isValidCity = false;
+  function validateCountry() {
+    const selectedCountry = countryInput.value.trim();
+    let isValidCountry = false;
 
     // Check if the entered city matches one of the datalist options
-    for (let i = 0; i < cityList.options.length; i++) {
-      if (selectedCity === cityList.options[i].value) {
-        isValidCity = true;
+    for (let i = 0; i < countryList.options.length; i++) {
+      if (selectedCountry === countryList.options[i].value) {
+        isValidCountry = true;
         break;
       }
     }
 
-    if (!isValidCity) {
-      cityError.style.display = 'block'; // Show the error message if invalid
-      cityInput.value = ''; // Optionally clear the input
+    if (!isValidCountry) {
+      countryError.style.display = 'block'; // Show the error message if invalid
+      countryInput.value = ''; // Optionally clear the input
     } else {
-      cityError.style.display = 'none'; // Hide the error message if valid
+      countryError.style.display = 'none'; // Hide the error message if valid
     }
   }
 });
 
-async function incrementCityUsers(cityId) {
-  console.log('In increment city users');
+async function incrementLocationUsers(locationId) {
+  console.log('In increment location users');
   try {
-    const cityRef = db.collection('cities').doc(cityId);
+    const locationRef = db.collection('location').doc(locationId);
 
     await db.runTransaction(async (transaction) => {
-      const cityDoc = await transaction.get(cityRef);
+      const locationDoc = await transaction.get(locationRef);
 
-      if (!cityDoc.exists) {
-        console.error(`City document with ID ${cityId} does not exist!`);
+      if (!locationDoc.exists) {
+        console.error(`Location document with ID ${locationId} does not exist!`);
         return;
       } else {
-        console.log(`City document with ID ${cityId} exists. Proceeding to update.`);
+        console.log(`Location document with ID ${locationId} exists. Proceeding to update.`);
       }
 
-      const currentNumberOfUsers = cityDoc.data().numberOfUsers || 0;
+      const currentNumberOfUsers = locationDoc.data().numberOfUsers || 0;
 
-      transaction.update(cityRef, {
+      transaction.update(locationRef, {
         numberOfUsers: currentNumberOfUsers + 1
       });
     });
-    console.log('City user count incremented successfully.');
+    console.log('Location user count incremented successfully.');
   } catch (error) {
-    console.error('Error incrementing city users:', error);
+    console.error('Error incrementing location users:', error);
   }
 }
 
@@ -347,34 +363,33 @@ document.getElementById('remove-form').addEventListener('submit', async (event) 
 });
 
 // Fetch city data from Firestore
-async function fetchCities() {
-  const citiesCollection = db.collection("cities")
+async function fetchLocations() {
+  const locationCollection = db.collection("location")
       .where('numberOfUsers', '>', 0)  // Filter for cities where numberOfUsers is greater than 0
       .orderBy('numberOfUsers', 'desc') // Order by numberOfUsers in descending order
       .limit(100); 
-  const citiesSnapshot = await citiesCollection.get();
-  const cities = [];
+  const locationSnapshot = await locationCollection.get();
+  const locations = [];
 
-  citiesSnapshot.forEach((cityDoc) => {
-    const cityData = cityDoc.data();
-    cities.push({
-      id: cityDoc.id,
-      name: cityData.name,
+  locationSnapshot.forEach((locationDoc) => {
+    const cityData = locationDoc.data();
+    locations.push({
+      id: locationDoc.id,
+      name: cityData.stateName || cityData.countryName,
       latitude: cityData.latitude,
       longitude: cityData.longitude,
-      population: cityData.population,
       numberOfUsers: cityData.numberOfUsers,
       country: cityData.country
     });
   });
 
-  console.log("CITIES: ", cities);  // Check that city data is being fetched correctly
-  return cities;
+  console.log("LOCATIONS: ", locations);  // Check that city data is being fetched correctly
+  return locations;
 }
 
 // Fetch user data for a specific city from Firestore
-async function fetchUsersForCity(cityId) {
-  const usersSnapshot = await db.collection("users").where('cityId', '==', cityId).get();
+async function fetchUsersForLocation(locationId) {
+  const usersSnapshot = await db.collection("users").where('locationId', '==', locationId).get();
   const users = [];
 
   usersSnapshot.forEach((userDoc) => {
@@ -383,22 +398,23 @@ async function fetchUsersForCity(cityId) {
       firstName: userData.firstName,
       secondName: userData.secondName,
       instagram: userData.instagram,
-      pictureURL: userData.pictureURL
+      pictureURL: userData.pictureURL,
+      city: userData.cityName
     });
   });
 
-  console.log(`USERS FOR CITY (${cityId}): `, users);  // Log the users for debugging
+  console.log(`USERS FOR LOCATION (${locationId}): `, users);  // Log the users for debugging
   return users;
 }
 
 function fetchCitiesAndCreateGlobe() {
   // Globe.js initialization with Firebase data
-  fetchCities().then(cities => {
-    console.log(cities); // Log the cities to check if data is being pulled correctly
+  fetchLocations().then(locations => {
+    console.log(locations); // Log the cities to check if data is being pulled correctly
     
     const globe = Globe()
     .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-    .labelsData(cities)
+    .labelsData(locations)
     .labelLat(d => d.latitude)
     .labelLng(d => d.longitude)
     .labelText(d => d.name)
@@ -427,13 +443,17 @@ function fetchCitiesAndCreateGlobe() {
   globe.pointOfView({ lat: 37.0902, lng: -95.7129, altitude: 2.5 }, 1000);
 
   // Handle label clicks to show city info and associated users
-  globe.onLabelClick(async city => {
-    const selectedCity = cities.find(c => c.name === city.name);
-    if (selectedCity) {
-      const cityInfo = selectedCity.name + ", " + selectedCity.country;
+  globe.onLabelClick(async location => {
+    console.log("label clicked, location: ", location)
+    const selectedLocation = locations.find(c => c.name === location.name);
+    console.log("selectedLocation: ", selectedLocation)
+    if (selectedLocation) {
+      const locationInfo = selectedLocation.name;
       
       // Fetch users for the selected city
-      const users = await fetchUsersForCity(selectedCity.id);
+      console.log("selectedLocation.id: ", selectedLocation.id);
+      const users = await fetchUsersForLocation(selectedLocation.id);
+      console.log("users found in location: ", users)
 
       // Map users data to display
       const usersInfo = users.map(user => `
@@ -442,6 +462,7 @@ function fetchCitiesAndCreateGlobe() {
             <img src="${user.pictureURL}" alt="${user.firstName}'s picture" class="user-picture">
             <div class="user-info">
               <p class="user-name">${user.firstName} ${user.secondName}</p>
+              <p class="user-instagram">${user.city}</p>
               <p class="user-instagram">@${user.instagram}</p>
             </div>
           </div>
@@ -452,76 +473,90 @@ function fetchCitiesAndCreateGlobe() {
       console.log("usersInfo: ", usersInfo);
 
       // Update the popup with city and user info
-      document.getElementById('city-name').textContent = cityInfo;
-      document.getElementById('city-info').innerHTML = usersInfo; // Use innerHTML to render HTML content
+      document.getElementById('location-name').textContent = locationInfo;
+      document.getElementById('location-info').innerHTML = usersInfo; // Use innerHTML to render HTML content
 
       // Show the city info popup
-      document.getElementById('city-popup').style.display = 'block';
+      document.getElementById('location-popup').style.display = 'block';
     }
 });
 });
 };
 
 // Close city info popup
-document.getElementById('city-close-btn').addEventListener('click', function() {
-  document.getElementById('city-popup').style.display = 'none';
+document.getElementById('location-close-btn').addEventListener('click', function() {
+  document.getElementById('location-popup').style.display = 'none';
 });
 
 // Function to populate the city options in the datalist
-function populateCityOptions(cityMapping) {
-  const datalist = document.getElementById('city-list');
+function populateCityOptions(countryMapping, stateMapping) {
+  const countryDatalist = document.getElementById('country-list');
+  const stateDatalist = document.getElementById('state-list');
   
   // Clear existing options
-  datalist.innerHTML = '';
+  countryDatalist.innerHTML = '';
+  stateDatalist.innerHTML = '';
 
   // Add options to the datalist
-  for (const [cityName, cityId] of Object.entries(cityMapping)) {
+  for (const [cityName, cityId] of Object.entries(countryMapping)) {
     const option = document.createElement('option');
     option.value = cityName;  // Display the city name to the user
     option.dataset.cityId = cityId;  // Store city ID in data attribute
-    datalist.appendChild(option);
+    countryDatalist.appendChild(option);
+  }
+
+  for (const [cityName, cityId] of Object.entries(stateMapping)) {
+    const option = document.createElement('option');
+    option.value = cityName;  // Display the city name to the user
+    option.dataset.cityId = cityId;  // Store city ID in data attribute
+    stateDatalist.appendChild(option);
   }
 }
 
-// Function to load the city-mapping JSON from a path
-async function loadCityMapping(path) {
+async function loadCityMapping(countryPath, statePath) {
   try {
-    const response = await fetch(path);
+    const countryResponse = await fetch(countryPath);
+    const stateResponse = await fetch(statePath);
     
-    if (!response.ok) {
-      throw new Error(`Failed to fetch city-mapping.json from ${path}: ${response.statusText}`);
+    if (!countryResponse.ok) {
+      throw new Error(`Failed to fetch country-mapping.json from ${countryPath}: ${countryResponse.statusText}`);
     }
 
-    const cityMapping = await response.json();  // Parse JSON from the response
-    populateCityOptions(cityMapping);  // Populate the city datalist
+    if (!stateResponse.ok) {
+      throw new Error(`Failed to fetch state-mapping.json from ${statePath}: ${stateResponse.statusText}`);
+    }
+
+    const countryMapping = await countryResponse.json();  // Parse JSON from the response
+    const stateMapping = await stateResponse.json();
+    populateCityOptions(countryMapping, stateMapping);  // Populate the city datalist
   } catch (error) {
-    console.error('Error loading city mapping:', error);
+    console.error('Error loading mapping:', error);
   }
 }
 
-// Event listener for city selection
-document.getElementById('city').addEventListener('input', function () {
-  const cityName = this.value;
-  const datalistOptions = document.querySelectorAll('#city-list option');
+// Event listener for country selection
+document.getElementById('country').addEventListener('input', function () {
+  const countryName = this.value;
+  const datalistOptions = document.querySelectorAll('#country-list option');
   
   // Find the matching option and set the city ID
   for (let option of datalistOptions) {
-    if (option.value === cityName) {
-      document.getElementById('city-id').value = option.dataset.cityId;
+    if (option.value === countryName) {
+      document.getElementById('country-id').value = option.dataset.cityId;
       break;
     }
   }
 });
 
 // Event listener for city selection
-document.getElementById('city').addEventListener('input', function () {
-  const cityName = this.value;
-  const datalistOptions = document.querySelectorAll('#city-list option');
+document.getElementById('state').addEventListener('input', function () {
+  const stateName = this.value;
+  const datalistOptions = document.querySelectorAll('#state-list option');
   
   // Find the matching option and set the city ID
   for (let option of datalistOptions) {
-    if (option.value === cityName) {
-      document.getElementById('city-id').value = option.dataset.cityId;
+    if (option.value === stateName) {
+      document.getElementById('state-id').value = option.dataset.cityId;
       break;
     }
   }
@@ -602,4 +637,4 @@ document.getElementById('participant-check-form').addEventListener('submit', asy
 // Call the loadCityData function on window load or when necessary
 window.onload = loadCityData;
 
-loadCityMapping('city-mapping.json');
+loadCityMapping('country-list.json', 'state-list.json');

@@ -511,42 +511,55 @@
   // Function to check if a user with the same first name, second name, and city already exists
   function checkIfUserExists(_x3, _x4, _x5) {
     return _checkIfUserExists.apply(this, arguments);
-  } // Function to check if a user with the same Instagram handle already exists
+  }
   function _checkIfUserExists() {
-    _checkIfUserExists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(firstName, secondName, cityId) {
+    _checkIfUserExists = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee6(firstName, secondName, locationId) {
       var usersSnapshot;
       return _regeneratorRuntime().wrap(function _callee6$(_context6) {
         while (1) switch (_context6.prev = _context6.next) {
           case 0:
-            console.log('Checking if user in same city with same name already exists');
+            console.log('Checking if user in same location with same name already exists');
             _context6.prev = 1;
             _context6.next = 4;
-            return db.collection('users').where('firstName', '==', firstName).where('secondName', '==', secondName).where('cityId', '==', cityId).get();
+            return db.collection('users').where('firstName', '==', firstName).where('secondName', '==', secondName).where('locationId', '==', locationId).get();
           case 4:
             usersSnapshot = _context6.sent;
             if (usersSnapshot.empty) {
-              _context6.next = 9;
+              _context6.next = 10;
               break;
             }
+            console.log("existing users: ", usersSnapshot);
             return _context6.abrupt("return", true);
-          case 9:
-            return _context6.abrupt("return", false);
           case 10:
-            _context6.next = 16;
+            return _context6.abrupt("return", false);
+          case 11:
+            _context6.next = 17;
             break;
-          case 12:
-            _context6.prev = 12;
+          case 13:
+            _context6.prev = 13;
             _context6.t0 = _context6["catch"](1);
             console.error('Error checking for existing user: ', _context6.t0);
             return _context6.abrupt("return", false);
-          case 16:
+          case 17:
           case "end":
             return _context6.stop();
         }
-      }, _callee6, null, [[1, 12]]);
+      }, _callee6, null, [[1, 13]]);
     }));
     return _checkIfUserExists.apply(this, arguments);
   }
+  document.getElementById('country').addEventListener('input', toggleStateInput);
+  function toggleStateInput() {
+    var countryInput = document.getElementById('country').value;
+    var stateContainer = document.getElementById('state-container');
+    if (countryInput === 'United States') {
+      stateContainer.style.display = 'block';
+    } else {
+      stateContainer.style.display = 'none';
+    }
+  }
+
+  // Function to check if a user with the same Instagram handle already exists
   function checkIfInstagramExists(_x6) {
     return _checkIfInstagramExists.apply(this, arguments);
   }
@@ -588,7 +601,7 @@
   var joinFormSubmitting = false;
   document.getElementById('join-form').addEventListener('submit', /*#__PURE__*/function () {
     var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(event) {
-      var cityInput, cityList, selectedCity, cityError, isValidCity, i, joinButton, firstName, secondName, cityId, instagram, pictureInput, userExists, instagramExists, pictureURL, pictureFile, storageRef, pictureRef, uploadSnapshot;
+      var countryInput, countryList, selectedCountry, countryError, isValidCountry, i, joinButton, firstName, secondName, countryId, stateId, instagram, pictureInput, cityInput, locationId, userExists, instagramExists, pictureURL, pictureFile, storageRef, pictureRef, uploadSnapshot;
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
@@ -604,38 +617,38 @@
             console.log('Inside the join form.');
 
             // City validation logic
-            cityInput = document.getElementById('city');
-            cityList = document.getElementById('city-list').options;
-            selectedCity = cityInput.value.trim();
-            cityError = document.getElementById('city-error');
-            isValidCity = false; // Loop through the options in the datalist to check for a match
+            countryInput = document.getElementById('country');
+            countryList = document.getElementById('country-list').options;
+            selectedCountry = countryInput.value.trim();
+            countryError = document.getElementById('country-error');
+            isValidCountry = false; // Loop through the options in the datalist to check for a match
             i = 0;
           case 11:
-            if (!(i < cityList.length)) {
+            if (!(i < countryList.length)) {
               _context.next = 18;
               break;
             }
-            if (!(selectedCity === cityList[i].value)) {
+            if (!(selectedCountry === countryList[i].value)) {
               _context.next = 15;
               break;
             }
-            isValidCity = true;
+            isValidCountry = true;
             return _context.abrupt("break", 18);
           case 15:
             i++;
             _context.next = 11;
             break;
           case 18:
-            if (isValidCity) {
+            if (isValidCountry) {
               _context.next = 25;
               break;
             }
-            cityError.style.display = 'block'; // Show the error message
-            cityInput.value = ''; // Optionally clear the input
+            countryError.style.display = 'block'; // Show the error message
+            countryInput.value = ''; // Optionally clear the input
             joinFormSubmitting = false; // Reset the flag
             return _context.abrupt("return");
           case 25:
-            cityError.style.display = 'none'; // Hide the error message if valid
+            countryError.style.display = 'none'; // Hide the error message if valid
           case 26:
             // Continue with the rest of the form submission logic if the city is valid
             joinButton = document.getElementById('join-btn');
@@ -643,11 +656,13 @@
             document.getElementById('loading-indicator').style.display = 'block'; // Show loading indicator
             firstName = document.getElementById('first-name').value.trim();
             secondName = document.getElementById('second-name').value.trim();
-            cityId = document.getElementById('city-id').value;
+            countryId = document.getElementById('country-id').value;
+            stateId = document.getElementById('state-id').value;
             instagram = document.getElementById('instagram').value.trim();
-            pictureInput = document.getElementById('picture'); // Check if the user exists in participants
+            pictureInput = document.getElementById('picture');
+            cityInput = document.getElementById('city').value.trim(); // Check if the user exists in participants
             if (isUserInParticipants(firstName, secondName)) {
-              _context.next = 40;
+              _context.next = 42;
               break;
             }
             alert('User not found in marathon participants. Please check your name and try again.');
@@ -655,13 +670,14 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 40:
-            _context.next = 42;
-            return checkIfUserExists(firstName, secondName, cityId);
           case 42:
+            locationId = stateId || countryId;
+            _context.next = 45;
+            return checkIfUserExists(firstName, secondName, locationId);
+          case 45:
             userExists = _context.sent;
             if (!userExists) {
-              _context.next = 49;
+              _context.next = 52;
               break;
             }
             alert('A user with the same name in the selected city already exists. Please try again.');
@@ -669,13 +685,13 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 49:
-            _context.next = 51;
+          case 52:
+            _context.next = 54;
             return checkIfInstagramExists(instagram);
-          case 51:
+          case 54:
             instagramExists = _context.sent;
             if (!instagramExists) {
-              _context.next = 58;
+              _context.next = 61;
               break;
             }
             alert('This Instagram handle is already associated with another user. Please use a different one.');
@@ -683,138 +699,139 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 58:
-            _context.prev = 58;
+          case 61:
+            _context.prev = 61;
             pictureURL = null; // Check if a picture file was selected
             if (!(pictureInput.files && pictureInput.files[0])) {
-              _context.next = 70;
+              _context.next = 73;
               break;
             }
             pictureFile = pictureInput.files[0];
             storageRef = firebase.storage().ref();
             pictureRef = storageRef.child("profile_pictures/".concat(firstName, "_").concat(secondName, "_").concat(Date.now())); // Upload the selected picture file
-            _context.next = 66;
-            return pictureRef.put(pictureFile);
-          case 66:
-            uploadSnapshot = _context.sent;
             _context.next = 69;
-            return uploadSnapshot.ref.getDownloadURL();
+            return pictureRef.put(pictureFile);
           case 69:
-            pictureURL = _context.sent;
-          case 70:
+            uploadSnapshot = _context.sent;
             _context.next = 72;
+            return uploadSnapshot.ref.getDownloadURL();
+          case 72:
+            pictureURL = _context.sent;
+          case 73:
+            _context.next = 75;
             return db.collection('users').add({
               firstName: firstName,
               secondName: secondName,
-              cityId: cityId,
+              locationId: stateId || countryId,
               instagram: instagram.toLowerCase(),
-              pictureURL: pictureURL || null
+              pictureURL: pictureURL || null,
+              cityName: cityInput
             });
-          case 72:
+          case 75:
             _context.sent;
-            console.log('Calling incrementCityUsers for cityId:', cityId);
-            _context.next = 76;
-            return incrementCityUsers(cityId);
-          case 76:
+            console.log('Calling incrementLocationUsers for locationId:', locationId);
+            _context.next = 79;
+            return incrementLocationUsers(locationId);
+          case 79:
             alert('Thank you for joining!');
             loadCityData();
             closePopup();
-            _context.next = 85;
+            _context.next = 88;
             break;
-          case 81:
-            _context.prev = 81;
-            _context.t0 = _context["catch"](58);
+          case 84:
+            _context.prev = 84;
+            _context.t0 = _context["catch"](61);
             console.error('Error adding user or uploading image:', _context.t0);
             alert('Failed to join. Please try again.');
-          case 85:
-            _context.prev = 85;
+          case 88:
+            _context.prev = 88;
             // Re-enable the button and hide loading in all scenarios
             joinButton.disabled = false;
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
-            return _context.finish(85);
-          case 90:
+            return _context.finish(88);
+          case 93:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[58, 81, 85, 90]]);
+      }, _callee, null, [[61, 84, 88, 93]]);
     }));
     return function (_x7) {
       return _ref.apply(this, arguments);
     };
   }());
   document.addEventListener('DOMContentLoaded', function () {
-    var cityInput = document.getElementById('city');
-    var cityError = document.getElementById('city-error');
-    var cityList = document.getElementById('city-list');
+    var countryInput = document.getElementById('country');
+    var countryError = document.getElementById('country-error');
+    var countryList = document.getElementById('country-list');
 
     // 1. Show the dropdown immediately when the user clicks into the city input (on focus)
-    cityInput.addEventListener('focus', function () {
-      cityError.style.display = 'none'; // Hide any previous error message
+    countryInput.addEventListener('focus', function () {
+      countryError.style.display = 'none'; // Hide any previous error message
       // Trigger an input event to open the dropdown list immediately
       var event = new Event('input', {
         bubbles: true
       });
-      cityInput.dispatchEvent(event);
+      countryInput.dispatchEvent(event);
     });
 
     // Validation logic to check if the input matches a city from the datalist
-    cityInput.addEventListener('blur', function () {
-      validateCity(); // Call validation when the user clicks out
+    countryInput.addEventListener('blur', function () {
+      validateCountry(); // Call validation when the user clicks out
     });
-    function validateCity() {
-      var selectedCity = cityInput.value.trim();
-      var isValidCity = false;
+    function validateCountry() {
+      var selectedCountry = countryInput.value.trim();
+      var isValidCountry = false;
 
       // Check if the entered city matches one of the datalist options
-      for (var i = 0; i < cityList.options.length; i++) {
-        if (selectedCity === cityList.options[i].value) {
-          isValidCity = true;
+      for (var i = 0; i < countryList.options.length; i++) {
+        if (selectedCountry === countryList.options[i].value) {
+          isValidCountry = true;
           break;
         }
       }
-      if (!isValidCity) {
-        cityError.style.display = 'block'; // Show the error message if invalid
-        cityInput.value = ''; // Optionally clear the input
+      if (!isValidCountry) {
+        countryError.style.display = 'block'; // Show the error message if invalid
+        countryInput.value = ''; // Optionally clear the input
       } else {
-        cityError.style.display = 'none'; // Hide the error message if valid
+        countryError.style.display = 'none'; // Hide the error message if valid
       }
     }
   });
-  function incrementCityUsers(_x8) {
-    return _incrementCityUsers.apply(this, arguments);
+  function incrementLocationUsers(_x8) {
+    return _incrementLocationUsers.apply(this, arguments);
   } // Handle "Remove" form submission (communicate with Firebase)
-  function _incrementCityUsers() {
-    _incrementCityUsers = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(cityId) {
-      var cityRef;
+  function _incrementLocationUsers() {
+    _incrementLocationUsers = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee9(locationId) {
+      var locationRef;
       return _regeneratorRuntime().wrap(function _callee9$(_context9) {
         while (1) switch (_context9.prev = _context9.next) {
           case 0:
-            console.log('In increment city users');
+            console.log('In increment location users');
             _context9.prev = 1;
-            cityRef = db.collection('cities').doc(cityId);
+            locationRef = db.collection('location').doc(locationId);
             _context9.next = 5;
             return db.runTransaction(/*#__PURE__*/function () {
               var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee8(transaction) {
-                var cityDoc, currentNumberOfUsers;
+                var locationDoc, currentNumberOfUsers;
                 return _regeneratorRuntime().wrap(function _callee8$(_context8) {
                   while (1) switch (_context8.prev = _context8.next) {
                     case 0:
                       _context8.next = 2;
-                      return transaction.get(cityRef);
+                      return transaction.get(locationRef);
                     case 2:
-                      cityDoc = _context8.sent;
-                      if (cityDoc.exists) {
+                      locationDoc = _context8.sent;
+                      if (locationDoc.exists) {
                         _context8.next = 8;
                         break;
                       }
-                      console.error("City document with ID ".concat(cityId, " does not exist!"));
+                      console.error("Location document with ID ".concat(locationId, " does not exist!"));
                       return _context8.abrupt("return");
                     case 8:
-                      console.log("City document with ID ".concat(cityId, " exists. Proceeding to update."));
+                      console.log("Location document with ID ".concat(locationId, " exists. Proceeding to update."));
                     case 9:
-                      currentNumberOfUsers = cityDoc.data().numberOfUsers || 0;
-                      transaction.update(cityRef, {
+                      currentNumberOfUsers = locationDoc.data().numberOfUsers || 0;
+                      transaction.update(locationRef, {
                         numberOfUsers: currentNumberOfUsers + 1
                       });
                     case 11:
@@ -823,25 +840,25 @@
                   }
                 }, _callee8);
               }));
-              return function (_x16) {
+              return function (_x17) {
                 return _ref5.apply(this, arguments);
               };
             }());
           case 5:
-            console.log('City user count incremented successfully.');
+            console.log('Location user count incremented successfully.');
             _context9.next = 11;
             break;
           case 8:
             _context9.prev = 8;
             _context9.t0 = _context9["catch"](1);
-            console.error('Error incrementing city users:', _context9.t0);
+            console.error('Error incrementing location users:', _context9.t0);
           case 11:
           case "end":
             return _context9.stop();
         }
       }, _callee9, null, [[1, 8]]);
     }));
-    return _incrementCityUsers.apply(this, arguments);
+    return _incrementLocationUsers.apply(this, arguments);
   }
   document.getElementById('remove-form').addEventListener('submit', /*#__PURE__*/function () {
     var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(event) {
@@ -902,56 +919,55 @@
   }());
 
   // Fetch city data from Firestore
-  function fetchCities() {
-    return _fetchCities.apply(this, arguments);
+  function fetchLocations() {
+    return _fetchLocations.apply(this, arguments);
   } // Fetch user data for a specific city from Firestore
-  function _fetchCities() {
-    _fetchCities = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
-      var citiesCollection, citiesSnapshot, cities;
+  function _fetchLocations() {
+    _fetchLocations = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee10() {
+      var locationCollection, locationSnapshot, locations;
       return _regeneratorRuntime().wrap(function _callee10$(_context10) {
         while (1) switch (_context10.prev = _context10.next) {
           case 0:
-            citiesCollection = db.collection("cities").where('numberOfUsers', '>', 0) // Filter for cities where numberOfUsers is greater than 0
+            locationCollection = db.collection("location").where('numberOfUsers', '>', 0) // Filter for cities where numberOfUsers is greater than 0
             .orderBy('numberOfUsers', 'desc') // Order by numberOfUsers in descending order
             .limit(100);
             _context10.next = 3;
-            return citiesCollection.get();
+            return locationCollection.get();
           case 3:
-            citiesSnapshot = _context10.sent;
-            cities = [];
-            citiesSnapshot.forEach(function (cityDoc) {
-              var cityData = cityDoc.data();
-              cities.push({
-                id: cityDoc.id,
-                name: cityData.name,
+            locationSnapshot = _context10.sent;
+            locations = [];
+            locationSnapshot.forEach(function (locationDoc) {
+              var cityData = locationDoc.data();
+              locations.push({
+                id: locationDoc.id,
+                name: cityData.stateName || cityData.countryName,
                 latitude: cityData.latitude,
                 longitude: cityData.longitude,
-                population: cityData.population,
                 numberOfUsers: cityData.numberOfUsers,
                 country: cityData.country
               });
             });
-            console.log("CITIES: ", cities); // Check that city data is being fetched correctly
-            return _context10.abrupt("return", cities);
+            console.log("LOCATIONS: ", locations); // Check that city data is being fetched correctly
+            return _context10.abrupt("return", locations);
           case 8:
           case "end":
             return _context10.stop();
         }
       }, _callee10);
     }));
-    return _fetchCities.apply(this, arguments);
+    return _fetchLocations.apply(this, arguments);
   }
-  function fetchUsersForCity(_x10) {
-    return _fetchUsersForCity.apply(this, arguments);
+  function fetchUsersForLocation(_x10) {
+    return _fetchUsersForLocation.apply(this, arguments);
   }
-  function _fetchUsersForCity() {
-    _fetchUsersForCity = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11(cityId) {
+  function _fetchUsersForLocation() {
+    _fetchUsersForLocation = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee11(locationId) {
       var usersSnapshot, users;
       return _regeneratorRuntime().wrap(function _callee11$(_context11) {
         while (1) switch (_context11.prev = _context11.next) {
           case 0:
             _context11.next = 2;
-            return db.collection("users").where('cityId', '==', cityId).get();
+            return db.collection("users").where('locationId', '==', locationId).get();
           case 2:
             usersSnapshot = _context11.sent;
             users = [];
@@ -961,10 +977,11 @@
                 firstName: userData.firstName,
                 secondName: userData.secondName,
                 instagram: userData.instagram,
-                pictureURL: userData.pictureURL
+                pictureURL: userData.pictureURL,
+                city: userData.cityName
               });
             });
-            console.log("USERS FOR CITY (".concat(cityId, "): "), users); // Log the users for debugging
+            console.log("USERS FOR LOCATION (".concat(locationId, "): "), users); // Log the users for debugging
             return _context11.abrupt("return", users);
           case 7:
           case "end":
@@ -972,14 +989,14 @@
         }
       }, _callee11);
     }));
-    return _fetchUsersForCity.apply(this, arguments);
+    return _fetchUsersForLocation.apply(this, arguments);
   }
   function fetchCitiesAndCreateGlobe() {
     // Globe.js initialization with Firebase data
-    fetchCities().then(function (cities) {
-      console.log(cities); // Log the cities to check if data is being pulled correctly
+    fetchLocations().then(function (locations) {
+      console.log(locations); // Log the cities to check if data is being pulled correctly
 
-      var globe = Globe().globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg').labelsData(cities).labelLat(function (d) {
+      var globe = Globe().globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg').labelsData(locations).labelLat(function (d) {
         return d.latitude;
       }).labelLng(function (d) {
         return d.longitude;
@@ -1012,37 +1029,42 @@
 
       // Handle label clicks to show city info and associated users
       globe.onLabelClick(/*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(city) {
-          var selectedCity, cityInfo, users, usersInfo;
+        var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(location) {
+          var selectedLocation, locationInfo, users, usersInfo;
           return _regeneratorRuntime().wrap(function _callee3$(_context3) {
             while (1) switch (_context3.prev = _context3.next) {
               case 0:
-                selectedCity = cities.find(function (c) {
-                  return c.name === city.name;
+                console.log("label clicked, location: ", location);
+                selectedLocation = locations.find(function (c) {
+                  return c.name === location.name;
                 });
-                if (!selectedCity) {
-                  _context3.next = 11;
+                console.log("selectedLocation: ", selectedLocation);
+                if (!selectedLocation) {
+                  _context3.next = 15;
                   break;
                 }
-                cityInfo = selectedCity.name + ", " + selectedCity.country; // Fetch users for the selected city
-                _context3.next = 5;
-                return fetchUsersForCity(selectedCity.id);
-              case 5:
+                locationInfo = selectedLocation.name; // Fetch users for the selected city
+                console.log("selectedLocation.id: ", selectedLocation.id);
+                _context3.next = 8;
+                return fetchUsersForLocation(selectedLocation.id);
+              case 8:
                 users = _context3.sent;
+                console.log("users found in location: ", users);
+
                 // Map users data to display
                 usersInfo = users.map(function (user) {
-                  return "\n        <a href=\"https://instagram.com/".concat(user.instagram, "\" target=\"_blank\" class=\"user-card-link\">\n          <div class=\"user-card\">\n            <img src=\"").concat(user.pictureURL, "\" alt=\"").concat(user.firstName, "'s picture\" class=\"user-picture\">\n            <div class=\"user-info\">\n              <p class=\"user-name\">").concat(user.firstName, " ").concat(user.secondName, "</p>\n              <p class=\"user-instagram\">@").concat(user.instagram, "</p>\n            </div>\n          </div>\n        </a>\n      ");
+                  return "\n        <a href=\"https://instagram.com/".concat(user.instagram, "\" target=\"_blank\" class=\"user-card-link\">\n          <div class=\"user-card\">\n            <img src=\"").concat(user.pictureURL, "\" alt=\"").concat(user.firstName, "'s picture\" class=\"user-picture\">\n            <div class=\"user-info\">\n              <p class=\"user-name\">").concat(user.firstName, " ").concat(user.secondName, "</p>\n              <p class=\"user-instagram\">").concat(user.city, "</p>\n              <p class=\"user-instagram\">@").concat(user.instagram, "</p>\n            </div>\n          </div>\n        </a>\n      ");
                 }).join(""); // Join without extra spaces to avoid layout issues
                 // Join without extra spaces to avoid layout issues
                 console.log("usersInfo: ", usersInfo);
 
                 // Update the popup with city and user info
-                document.getElementById('city-name').textContent = cityInfo;
-                document.getElementById('city-info').innerHTML = usersInfo; // Use innerHTML to render HTML content
+                document.getElementById('location-name').textContent = locationInfo;
+                document.getElementById('location-info').innerHTML = usersInfo; // Use innerHTML to render HTML content
 
                 // Show the city info popup
-                document.getElementById('city-popup').style.display = 'block';
-              case 11:
+                document.getElementById('location-popup').style.display = 'block';
+              case 15:
               case "end":
                 return _context3.stop();
             }
@@ -1056,73 +1078,95 @@
   }
 
   // Close city info popup
-  document.getElementById('city-close-btn').addEventListener('click', function () {
-    document.getElementById('city-popup').style.display = 'none';
+  document.getElementById('location-close-btn').addEventListener('click', function () {
+    document.getElementById('location-popup').style.display = 'none';
   });
 
   // Function to populate the city options in the datalist
-  function populateCityOptions(cityMapping) {
-    var datalist = document.getElementById('city-list');
+  function populateCityOptions(countryMapping, stateMapping) {
+    var countryDatalist = document.getElementById('country-list');
+    var stateDatalist = document.getElementById('state-list');
 
     // Clear existing options
-    datalist.innerHTML = '';
+    countryDatalist.innerHTML = '';
+    stateDatalist.innerHTML = '';
 
     // Add options to the datalist
-    for (var _i = 0, _Object$entries = Object.entries(cityMapping); _i < _Object$entries.length; _i++) {
+    for (var _i = 0, _Object$entries = Object.entries(countryMapping); _i < _Object$entries.length; _i++) {
       var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
         cityName = _Object$entries$_i[0],
         cityId = _Object$entries$_i[1];
       var option = document.createElement('option');
       option.value = cityName; // Display the city name to the user
       option.dataset.cityId = cityId; // Store city ID in data attribute
-      datalist.appendChild(option);
+      countryDatalist.appendChild(option);
+    }
+    for (var _i2 = 0, _Object$entries2 = Object.entries(stateMapping); _i2 < _Object$entries2.length; _i2++) {
+      var _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 2),
+        _cityName = _Object$entries2$_i[0],
+        _cityId = _Object$entries2$_i[1];
+      var _option = document.createElement('option');
+      _option.value = _cityName; // Display the city name to the user
+      _option.dataset.cityId = _cityId; // Store city ID in data attribute
+      stateDatalist.appendChild(_option);
     }
   }
-
-  // Function to load the city-mapping JSON from a path
-  function loadCityMapping(_x12) {
+  function loadCityMapping(_x12, _x13) {
     return _loadCityMapping.apply(this, arguments);
-  } // Event listener for city selection
+  } // Event listener for country selection
   function _loadCityMapping() {
-    _loadCityMapping = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(path) {
-      var response, cityMapping;
+    _loadCityMapping = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee12(countryPath, statePath) {
+      var countryResponse, stateResponse, countryMapping, stateMapping;
       return _regeneratorRuntime().wrap(function _callee12$(_context12) {
         while (1) switch (_context12.prev = _context12.next) {
           case 0:
             _context12.prev = 0;
             _context12.next = 3;
-            return fetch(path);
+            return fetch(countryPath);
           case 3:
-            response = _context12.sent;
-            if (response.ok) {
-              _context12.next = 6;
+            countryResponse = _context12.sent;
+            _context12.next = 6;
+            return fetch(statePath);
+          case 6:
+            stateResponse = _context12.sent;
+            if (countryResponse.ok) {
+              _context12.next = 9;
               break;
             }
-            throw new Error("Failed to fetch city-mapping.json from ".concat(path, ": ").concat(response.statusText));
-          case 6:
-            _context12.next = 8;
-            return response.json();
-          case 8:
-            cityMapping = _context12.sent;
-            // Parse JSON from the response
-            populateCityOptions(cityMapping); // Populate the city datalist
-            _context12.next = 15;
+            throw new Error("Failed to fetch country-mapping.json from ".concat(countryPath, ": ").concat(countryResponse.statusText));
+          case 9:
+            if (stateResponse.ok) {
+              _context12.next = 11;
+              break;
+            }
+            throw new Error("Failed to fetch state-mapping.json from ".concat(statePath, ": ").concat(stateResponse.statusText));
+          case 11:
+            _context12.next = 13;
+            return countryResponse.json();
+          case 13:
+            countryMapping = _context12.sent;
+            _context12.next = 16;
+            return stateResponse.json();
+          case 16:
+            stateMapping = _context12.sent;
+            populateCityOptions(countryMapping, stateMapping); // Populate the city datalist
+            _context12.next = 23;
             break;
-          case 12:
-            _context12.prev = 12;
+          case 20:
+            _context12.prev = 20;
             _context12.t0 = _context12["catch"](0);
-            console.error('Error loading city mapping:', _context12.t0);
-          case 15:
+            console.error('Error loading mapping:', _context12.t0);
+          case 23:
           case "end":
             return _context12.stop();
         }
-      }, _callee12, null, [[0, 12]]);
+      }, _callee12, null, [[0, 20]]);
     }));
     return _loadCityMapping.apply(this, arguments);
   }
-  document.getElementById('city').addEventListener('input', function () {
-    var cityName = this.value;
-    var datalistOptions = document.querySelectorAll('#city-list option');
+  document.getElementById('country').addEventListener('input', function () {
+    var countryName = this.value;
+    var datalistOptions = document.querySelectorAll('#country-list option');
 
     // Find the matching option and set the city ID
     var _iterator = _createForOfIteratorHelper(datalistOptions),
@@ -1130,8 +1174,8 @@
     try {
       for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var option = _step.value;
-        if (option.value === cityName) {
-          document.getElementById('city-id').value = option.dataset.cityId;
+        if (option.value === countryName) {
+          document.getElementById('country-id').value = option.dataset.cityId;
           break;
         }
       }
@@ -1143,9 +1187,9 @@
   });
 
   // Event listener for city selection
-  document.getElementById('city').addEventListener('input', function () {
-    var cityName = this.value;
-    var datalistOptions = document.querySelectorAll('#city-list option');
+  document.getElementById('state').addEventListener('input', function () {
+    var stateName = this.value;
+    var datalistOptions = document.querySelectorAll('#state-list option');
 
     // Find the matching option and set the city ID
     var _iterator2 = _createForOfIteratorHelper(datalistOptions),
@@ -1153,8 +1197,8 @@
     try {
       for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var option = _step2.value;
-        if (option.value === cityName) {
-          document.getElementById('city-id').value = option.dataset.cityId;
+        if (option.value === stateName) {
+          document.getElementById('state-id').value = option.dataset.cityId;
           break;
         }
       }
@@ -1222,7 +1266,7 @@
     }));
     return _loadGlobeData.apply(this, arguments);
   }
-  function participantExists(_x13, _x14) {
+  function participantExists(_x14, _x15) {
     return _participantExists.apply(this, arguments);
   } // Function to normalize names (capitalize first letter of each name)
   function _participantExists() {
@@ -1275,14 +1319,14 @@
         }
       }, _callee4);
     }));
-    return function (_x15) {
+    return function (_x16) {
       return _ref4.apply(this, arguments);
     };
   }());
 
   // Call the loadCityData function on window load or when necessary
   window.onload = loadCityData;
-  loadCityMapping('city-mapping.json');
+  loadCityMapping('country-list.json', 'state-list.json');
 
 }));
 //# sourceMappingURL=globe.gl.js.map
