@@ -56,7 +56,6 @@ async function isUserInParticipants(firstName, secondName) {
     const querySnapshot = await getDocs(q);
     
     if (!querySnapshot.empty) {
-      console.log(querySnapshot);
       console.log('User found in participants.');
       return true;
     } else {
@@ -90,7 +89,6 @@ async function checkIfUserExists(firstName, secondName, locationId) {
 
     // If the query returns any documents, a user already exists
     if (!usersSnapshot.empty) {
-      console.log("existing users: ", usersSnapshot)
       return true;  // User exists
     } else {
       return false; // No user found
@@ -143,8 +141,6 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
     }
 
     joinFormSubmitting = true; // Set the flag to true, to indicate the form is being submitted
-
-    console.log('Inside the join form.');
 
     // City validation logic
     const countryInput = document.getElementById('country');
@@ -236,7 +232,6 @@ document.getElementById('join-form').addEventListener('submit', async (event) =>
         cityName: cityInput
       });
 
-      console.log('Calling incrementLocationUsers for locationId:', locationId);
       await incrementLocationUsers(locationId);
 
       alert('Thank you for joining!');
@@ -303,8 +298,6 @@ async function incrementLocationUsers(locationId) {
       if (!locationDoc.exists) {
         console.error(`Location document with ID ${locationId} does not exist!`);
         return;
-      } else {
-        console.log(`Location document with ID ${locationId} exists. Proceeding to update.`);
       }
 
       const currentNumberOfUsers = locationDoc.data().numberOfUsers || 0;
@@ -383,7 +376,6 @@ async function fetchLocations() {
     });
   });
 
-  // console.log("LOCATIONS: ", locations);  // Check that city data is being fetched correctly
   return locations;
 }
 
@@ -403,14 +395,12 @@ async function fetchUsersForLocation(locationId) {
     });
   });
 
-  console.log(`USERS FOR LOCATION (${locationId}): `, users);  // Log the users for debugging
   return users;
 }
 
 function fetchCitiesAndCreateGlobe() {
   // Globe.js initialization with Firebase data
   fetchLocations().then(locations => {
-    console.log(locations); // Log the cities to check if data is being pulled correctly
     
     const globe = Globe()
     .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
@@ -444,16 +434,11 @@ function fetchCitiesAndCreateGlobe() {
 
   // Handle label clicks to show city info and associated users
   globe.onLabelClick(async location => {
-    console.log("label clicked, location: ", location)
     const selectedLocation = locations.find(c => c.name === location.name);
-    console.log("selectedLocation: ", selectedLocation)
     if (selectedLocation) {
       const locationInfo = selectedLocation.name;
       
-      // Fetch users for the selected city
-      // console.log("selectedLocation.id: ", selectedLocation.id);
       const users = await fetchUsersForLocation(selectedLocation.id);
-      // console.log("users found in location: ", users)
 
       // Map users data to display
       const usersInfo = users.map(user => `
@@ -469,8 +454,6 @@ function fetchCitiesAndCreateGlobe() {
         </a>
       `).join("");  // Join without extra spaces to avoid layout issues
         // Join without extra spaces to avoid layout issues
-
-      // console.log("usersInfo: ", usersInfo);
 
       // Update the popup with city and user info
       document.getElementById('location-name').textContent = locationInfo;
