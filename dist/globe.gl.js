@@ -947,7 +947,7 @@
                 country: cityData.country
               });
             });
-            console.log("LOCATIONS: ", locations); // Check that city data is being fetched correctly
+            // console.log("LOCATIONS: ", locations); // Check that city data is being fetched correctly
             return _context10.abrupt("return", locations);
           case 8:
           case "end":
@@ -1044,19 +1044,19 @@
                   break;
                 }
                 locationInfo = selectedLocation.name; // Fetch users for the selected city
-                console.log("selectedLocation.id: ", selectedLocation.id);
+                // console.log("selectedLocation.id: ", selectedLocation.id);
                 _context3.next = 8;
                 return fetchUsersForLocation(selectedLocation.id);
               case 8:
                 users = _context3.sent;
-                console.log("users found in location: ", users);
+                // console.log("users found in location: ", users);
 
                 // Map users data to display
                 usersInfo = users.map(function (user) {
                   return "\n        <a href=\"https://instagram.com/".concat(user.instagram, "\" target=\"_blank\" class=\"user-card-link\">\n          <div class=\"user-card\">\n            <img src=\"").concat(user.pictureURL, "\" alt=\"").concat(user.firstName, "'s picture\" class=\"user-picture\">\n            <div class=\"user-info\">\n              <p class=\"user-name\">").concat(user.firstName, " ").concat(user.secondName, "</p>\n              <p class=\"user-instagram\">").concat(user.city, "</p>\n              <p class=\"user-instagram\">@").concat(user.instagram, "</p>\n            </div>\n          </div>\n        </a>\n      ");
                 }).join(""); // Join without extra spaces to avoid layout issues
                 // Join without extra spaces to avoid layout issues
-                console.log("usersInfo: ", usersInfo);
+                // console.log("usersInfo: ", usersInfo);
 
                 // Update the popup with city and user info
                 document.getElementById('location-name').textContent = locationInfo;

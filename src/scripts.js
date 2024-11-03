@@ -1,3 +1,5 @@
+const { default: firebase } = require("firebase/compat/app");
+
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -13,6 +15,7 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 const storage = firebase.storage();
+const collection = firebase.collection();
 
 // Popup card logic
 const joinPopup = document.getElementById('join-popup');
@@ -383,7 +386,7 @@ async function fetchLocations() {
     });
   });
 
-  console.log("LOCATIONS: ", locations);  // Check that city data is being fetched correctly
+  // console.log("LOCATIONS: ", locations);  // Check that city data is being fetched correctly
   return locations;
 }
 
@@ -451,9 +454,9 @@ function fetchCitiesAndCreateGlobe() {
       const locationInfo = selectedLocation.name;
       
       // Fetch users for the selected city
-      console.log("selectedLocation.id: ", selectedLocation.id);
+      // console.log("selectedLocation.id: ", selectedLocation.id);
       const users = await fetchUsersForLocation(selectedLocation.id);
-      console.log("users found in location: ", users)
+      // console.log("users found in location: ", users)
 
       // Map users data to display
       const usersInfo = users.map(user => `
@@ -470,7 +473,7 @@ function fetchCitiesAndCreateGlobe() {
       `).join("");  // Join without extra spaces to avoid layout issues
         // Join without extra spaces to avoid layout issues
 
-      console.log("usersInfo: ", usersInfo);
+      // console.log("usersInfo: ", usersInfo);
 
       // Update the popup with city and user info
       document.getElementById('location-name').textContent = locationInfo;
