@@ -482,28 +482,27 @@
           case 7:
             querySnapshot = _context5.sent;
             if (querySnapshot.empty) {
-              _context5.next = 14;
+              _context5.next = 13;
               break;
             }
-            console.log(querySnapshot);
             console.log('User found in participants.');
             return _context5.abrupt("return", true);
-          case 14:
+          case 13:
             console.log('User not found in participants.');
             return _context5.abrupt("return", false);
-          case 16:
-            _context5.next = 22;
+          case 15:
+            _context5.next = 21;
             break;
-          case 18:
-            _context5.prev = 18;
+          case 17:
+            _context5.prev = 17;
             _context5.t0 = _context5["catch"](4);
             console.error('Error checking Firestore:', _context5.t0);
             return _context5.abrupt("return", false);
-          case 22:
+          case 21:
           case "end":
             return _context5.stop();
         }
-      }, _callee5, null, [[4, 18]]);
+      }, _callee5, null, [[4, 17]]);
     }));
     return _isUserInParticipants.apply(this, arguments);
   }
@@ -525,26 +524,25 @@
           case 4:
             usersSnapshot = _context6.sent;
             if (usersSnapshot.empty) {
-              _context6.next = 10;
+              _context6.next = 9;
               break;
             }
-            console.log("existing users: ", usersSnapshot);
             return _context6.abrupt("return", true);
-          case 10:
+          case 9:
             return _context6.abrupt("return", false);
-          case 11:
-            _context6.next = 17;
+          case 10:
+            _context6.next = 16;
             break;
-          case 13:
-            _context6.prev = 13;
+          case 12:
+            _context6.prev = 12;
             _context6.t0 = _context6["catch"](1);
             console.error('Error checking for existing user: ', _context6.t0);
             return _context6.abrupt("return", false);
-          case 17:
+          case 16:
           case "end":
             return _context6.stop();
         }
-      }, _callee6, null, [[1, 13]]);
+      }, _callee6, null, [[1, 12]]);
     }));
     return _checkIfUserExists.apply(this, arguments);
   }
@@ -614,8 +612,6 @@
           case 3:
             joinFormSubmitting = true; // Set the flag to true, to indicate the form is being submitted
 
-            console.log('Inside the join form.');
-
             // City validation logic
             countryInput = document.getElementById('country');
             countryList = document.getElementById('country-list').options;
@@ -623,33 +619,33 @@
             countryError = document.getElementById('country-error');
             isValidCountry = false; // Loop through the options in the datalist to check for a match
             i = 0;
-          case 11:
+          case 10:
             if (!(i < countryList.length)) {
-              _context.next = 18;
+              _context.next = 17;
               break;
             }
             if (!(selectedCountry === countryList[i].value)) {
-              _context.next = 15;
+              _context.next = 14;
               break;
             }
             isValidCountry = true;
-            return _context.abrupt("break", 18);
-          case 15:
+            return _context.abrupt("break", 17);
+          case 14:
             i++;
-            _context.next = 11;
+            _context.next = 10;
             break;
-          case 18:
+          case 17:
             if (isValidCountry) {
-              _context.next = 25;
+              _context.next = 24;
               break;
             }
             countryError.style.display = 'block'; // Show the error message
             countryInput.value = ''; // Optionally clear the input
             joinFormSubmitting = false; // Reset the flag
             return _context.abrupt("return");
-          case 25:
+          case 24:
             countryError.style.display = 'none'; // Hide the error message if valid
-          case 26:
+          case 25:
             // Continue with the rest of the form submission logic if the city is valid
             joinButton = document.getElementById('join-btn');
             joinButton.disabled = true; // Disable the button
@@ -662,7 +658,7 @@
             pictureInput = document.getElementById('picture');
             cityInput = document.getElementById('city').value.trim(); // Check if the user exists in participants
             if (isUserInParticipants(firstName, secondName)) {
-              _context.next = 42;
+              _context.next = 41;
               break;
             }
             alert('User not found in marathon participants. Please check your name and try again.');
@@ -670,14 +666,14 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 42:
+          case 41:
             locationId = stateId || countryId;
-            _context.next = 45;
+            _context.next = 44;
             return checkIfUserExists(firstName, secondName, locationId);
-          case 45:
+          case 44:
             userExists = _context.sent;
             if (!userExists) {
-              _context.next = 52;
+              _context.next = 51;
               break;
             }
             alert('A user with the same name in the selected city already exists. Please try again.');
@@ -685,13 +681,13 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 52:
-            _context.next = 54;
+          case 51:
+            _context.next = 53;
             return checkIfInstagramExists(instagram);
-          case 54:
+          case 53:
             instagramExists = _context.sent;
             if (!instagramExists) {
-              _context.next = 61;
+              _context.next = 60;
               break;
             }
             alert('This Instagram handle is already associated with another user. Please use a different one.');
@@ -699,26 +695,26 @@
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
             return _context.abrupt("return");
-          case 61:
-            _context.prev = 61;
+          case 60:
+            _context.prev = 60;
             pictureURL = null; // Check if a picture file was selected
             if (!(pictureInput.files && pictureInput.files[0])) {
-              _context.next = 73;
+              _context.next = 72;
               break;
             }
             pictureFile = pictureInput.files[0];
             storageRef = firebase.storage().ref();
             pictureRef = storageRef.child("profile_pictures/".concat(firstName, "_").concat(secondName, "_").concat(Date.now())); // Upload the selected picture file
-            _context.next = 69;
+            _context.next = 68;
             return pictureRef.put(pictureFile);
-          case 69:
+          case 68:
             uploadSnapshot = _context.sent;
-            _context.next = 72;
+            _context.next = 71;
             return uploadSnapshot.ref.getDownloadURL();
-          case 72:
+          case 71:
             pictureURL = _context.sent;
-          case 73:
-            _context.next = 75;
+          case 72:
+            _context.next = 74;
             return db.collection('users').add({
               firstName: firstName,
               secondName: secondName,
@@ -727,34 +723,33 @@
               pictureURL: pictureURL || null,
               cityName: cityInput
             });
-          case 75:
+          case 74:
             _context.sent;
-            console.log('Calling incrementLocationUsers for locationId:', locationId);
-            _context.next = 79;
+            _context.next = 77;
             return incrementLocationUsers(locationId);
-          case 79:
+          case 77:
             alert('Thank you for joining!');
             loadCityData();
             closePopup();
-            _context.next = 88;
+            _context.next = 86;
             break;
-          case 84:
-            _context.prev = 84;
-            _context.t0 = _context["catch"](61);
+          case 82:
+            _context.prev = 82;
+            _context.t0 = _context["catch"](60);
             console.error('Error adding user or uploading image:', _context.t0);
             alert('Failed to join. Please try again.');
-          case 88:
-            _context.prev = 88;
+          case 86:
+            _context.prev = 86;
             // Re-enable the button and hide loading in all scenarios
             joinButton.disabled = false;
             joinFormSubmitting = false; // Reset the flag
             document.getElementById('loading-indicator').style.display = 'none'; // Hide loading
-            return _context.finish(88);
-          case 93:
+            return _context.finish(86);
+          case 91:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[61, 84, 88, 93]]);
+      }, _callee, null, [[60, 82, 86, 91]]);
     }));
     return function (_x7) {
       return _ref.apply(this, arguments);
@@ -822,19 +817,17 @@
                     case 2:
                       locationDoc = _context8.sent;
                       if (locationDoc.exists) {
-                        _context8.next = 8;
+                        _context8.next = 6;
                         break;
                       }
                       console.error("Location document with ID ".concat(locationId, " does not exist!"));
                       return _context8.abrupt("return");
-                    case 8:
-                      console.log("Location document with ID ".concat(locationId, " exists. Proceeding to update."));
-                    case 9:
+                    case 6:
                       currentNumberOfUsers = locationDoc.data().numberOfUsers || 0;
                       transaction.update(locationRef, {
                         numberOfUsers: currentNumberOfUsers + 1
                       });
-                    case 11:
+                    case 8:
                     case "end":
                       return _context8.stop();
                   }
@@ -947,8 +940,6 @@
                 country: cityData.country
               });
             });
-
-            // console.log("LOCATIONS: ", locations);  // Check that city data is being fetched correctly
             return _context10.abrupt("return", locations);
           case 7:
           case "end":
@@ -982,9 +973,8 @@
                 city: userData.cityName
               });
             });
-            console.log("USERS FOR LOCATION (".concat(locationId, "): "), users); // Log the users for debugging
             return _context11.abrupt("return", users);
-          case 7:
+          case 6:
           case "end":
             return _context11.stop();
         }
@@ -995,8 +985,6 @@
   function fetchCitiesAndCreateGlobe() {
     // Globe.js initialization with Firebase data
     fetchLocations().then(function (locations) {
-      console.log(locations); // Log the cities to check if data is being pulled correctly
-
       var globe = Globe().globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg').labelsData(locations).labelLat(function (d) {
         return d.latitude;
       }).labelLng(function (d) {
@@ -1035,35 +1023,30 @@
           return _regeneratorRuntime().wrap(function _callee3$(_context3) {
             while (1) switch (_context3.prev = _context3.next) {
               case 0:
-                console.log("label clicked, location: ", location);
                 selectedLocation = locations.find(function (c) {
                   return c.name === location.name;
                 });
-                console.log("selectedLocation: ", selectedLocation);
                 if (!selectedLocation) {
-                  _context3.next = 12;
+                  _context3.next = 10;
                   break;
                 }
-                locationInfo = selectedLocation.name; // Fetch users for the selected city
-                // console.log("selectedLocation.id: ", selectedLocation.id);
-                _context3.next = 7;
+                locationInfo = selectedLocation.name;
+                _context3.next = 5;
                 return fetchUsersForLocation(selectedLocation.id);
-              case 7:
+              case 5:
                 users = _context3.sent;
-                // console.log("users found in location: ", users)
                 // Map users data to display
                 usersInfo = users.map(function (user) {
                   return "\n        <a href=\"https://instagram.com/".concat(user.instagram, "\" target=\"_blank\" class=\"user-card-link\">\n          <div class=\"user-card\">\n            <img src=\"").concat(user.pictureURL, "\" alt=\"").concat(user.firstName, "'s picture\" class=\"user-picture\">\n            <div class=\"user-info\">\n              <p class=\"user-name\">").concat(user.firstName, " ").concat(user.secondName, "</p>\n              <p class=\"user-instagram\">").concat(user.city, "</p>\n              <p class=\"user-instagram\">@").concat(user.instagram, "</p>\n            </div>\n          </div>\n        </a>\n      ");
                 }).join(""); // Join without extra spaces to avoid layout issues
                 // Join without extra spaces to avoid layout issues
-                // console.log("usersInfo: ", usersInfo);
                 // Update the popup with city and user info
                 document.getElementById('location-name').textContent = locationInfo;
                 document.getElementById('location-info').innerHTML = usersInfo; // Use innerHTML to render HTML content
 
                 // Show the city info popup
                 document.getElementById('location-popup').style.display = 'block';
-              case 12:
+              case 10:
               case "end":
                 return _context3.stop();
             }
